@@ -33,7 +33,8 @@ export function createConstants(networkId: NetworkID) {
     [config.Strategies.Vanilla]: true,
     [config.Strategies.Comp]: true,
     [config.Strategies.OZVotes]: true,
-    [config.Strategies.Whitelist]: true
+    [config.Strategies.Whitelist]: true,
+    [config.Strategies.MerkleVoting]: true
   };
 
   const SUPPORTED_EXECUTORS = {
@@ -51,14 +52,16 @@ export function createConstants(networkId: NetworkID) {
   };
 
   const PROPOSAL_VALIDATIONS = {
-    [config.ProposalValidations.VotingPower]: 'Voting power'
+    [config.ProposalValidations.VotingPower]: 'Voting power',
+    [config.ProposalValidations.WhitelistAndActiveProposals]: 'Whitelist and active proposals'
   };
 
   const STRATEGIES = {
     [config.Strategies.Vanilla]: 'Vanilla',
     [config.Strategies.Comp]: 'ERC-20 Votes (EIP-5805)',
     [config.Strategies.OZVotes]: 'ERC-20 Votes Comp (EIP-5805)',
-    [config.Strategies.Whitelist]: 'Merkle whitelist'
+    [config.Strategies.Whitelist]: 'Merkle whitelist',
+    [config.Strategies.MerkleVoting]: 'Merkle voting'
   };
 
   const EXECUTORS = {

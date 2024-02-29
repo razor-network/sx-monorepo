@@ -17,7 +17,7 @@ function createStandardConfig(
   return {
     Meta: {
       eip712ChainId,
-      proxyFactory: '0xcE454707ce6516F19d3617017fB816bF8c5b8795',
+      proxyFactory: '0x542922aF76e8b55076a54b15fD972156f5B143B0',
       masterSpace: '0xCEC35E76F2727133b84274d45e5D761200857251'
     },
     Authenticators: {
@@ -97,27 +97,27 @@ export const evmNetworks = {
   sep: {
     Meta: {
       eip712ChainId: 11155111,
-      proxyFactory: '0xcE454707ce6516F19d3617017fB816bF8c5b8795',
-      masterSpace: '0xCEC35E76F2727133b84274d45e5D761200857251'
+      proxyFactory: '0x542922aF76e8b55076a54b15fD972156f5B143B0',
+      masterSpace: '0xB1870f2Dc79862c5a06090344bfbBCA07483dAEe'
     },
     Authenticators: {
-      EthSig: '0x6bd991280717CE1e9bf4156b4125485c9872AF44',
-      EthTx: '0x3E93Eee429B20e7336D5c6467333879488704bc7'
+      EthSig: '0x38b4B21b498a0983aE8028442FEB48BB91A9B75e',
+      EthTx: '0xA927DEcf7E163b779592711fF866a58d1a5Cc270'
     },
     Strategies: {
-      Vanilla: '0x5e58c59E37F6571353249B03Df825B9cdC8f8af1',
-      Comp: '0xc3482b52fE3B21caE9A34BF17E5808aC96319985',
-      OZVotes: '0x5b30b72f79B88f737cfc7B7e6afba8F33C8D5f2c',
-      Whitelist: '0xCE1cD69dA94974BcD6439489727E2471DD91BC32',
-      MerkleVoting: '0x97a80c1694D296F2e19b9654423e1e499BbC0537'
+      Vanilla: '0x63E60ae42844dAf91C9Bcf8057731AA97012eD0a',
+      Comp: '0x5Df7743a11136E11010c3F6976C28a8aF5D681a7',
+      OZVotes: '0x9b528301AE02C4141eB9e870e36C14bE2E0Ec48F',
+      Whitelist: '0x4ea6CD1c54e67f650aE9bb8f1C126a2a9226510A',
+      MerkleVoting: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29'
     },
     ProposalValidations: {
-      VotingPower: '0x9fcff6d7b3E57E0f1C918160FbD7F70F33Ca5D21',
-      WhitelistAndActiveProposals: '0x273E5bFA84b42d99346513Feba2aF2701970Fd16'
+      VotingPower: '0x975201328596612a8F46263D4216355B6D94DFF7',
+      WhitelistAndActiveProposals: '0xc72dC228cB23871E24C12439D04a8792a888333d'
     },
     ExecutionStrategies: {
-      SimpleQuorumAvatar: '0x4d719A8131eC19B06b11b3049076d09F45527cC4',
-      SimpleQuorumTimelock: '0x13DE21a35fEd1C16E4c09FD1888186cb357A0ab2',
+      SimpleQuorumAvatar: '0x38afdA9bD192300C128C22278D71D492dB1Ac238',
+      SimpleQuorumTimelock: '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4',
       Axiom: null,
       Isokratia: null
     }

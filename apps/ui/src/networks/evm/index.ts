@@ -57,7 +57,7 @@ export const METADATA: Record<string, Metadata> = {
     chainId: 11155111,
     apiUrl:
       import.meta.env.VITE_EVM_SEPOLIA_API ??
-      'https://api.studio.thegraph.com/query/66892/razor-sx-subgraph/v0.0.22',
+      'https://api.studio.thegraph.com/query/66892/razor-sx-subgraph/v0.0.23',
     avatar: 'ipfs://bafkreid7ndxh6y2ljw2jhbisodiyrhcy2udvnwqgon5wgells3kh4si5z4',
     blockTime: 13.2816
   },
