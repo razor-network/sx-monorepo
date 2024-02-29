@@ -13,8 +13,8 @@
   },
   "sepolia": {
     "ProxyFactory": {
-      "address": "0x4b4f7f64be813ccc66aefc3bfce2baa01188631c",
-      "startBlock": 4519171
+      "address": "0xcE454707ce6516F19d3617017fB816bF8c5b8795",
+      "startBlock": 5380800
     }
   },
   "matic": {

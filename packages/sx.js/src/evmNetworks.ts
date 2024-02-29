@@ -17,27 +17,27 @@ function createStandardConfig(
   return {
     Meta: {
       eip712ChainId,
-      proxyFactory: '0x4b4f7f64be813ccc66aefc3bfce2baa01188631c',
-      masterSpace: '0xc3031a7d3326e47d49bff9d374d74f364b29ce4d'
+      proxyFactory: '0xcE454707ce6516F19d3617017fB816bF8c5b8795',
+      masterSpace: '0xCEC35E76F2727133b84274d45e5D761200857251'
     },
     Authenticators: {
-      EthSig: '0x5f9b7d78c9a37a439d78f801e0e339c6e711e260',
-      EthTx: '0xba06e6ccb877c332181a6867c05c8b746a21aed1',
+      EthSig: '0x6bd991280717CE1e9bf4156b4125485c9872AF44',
+      EthTx: '0x3E93Eee429B20e7336D5c6467333879488704bc7',
       ...additionalAuthenticators
     },
     Strategies: {
-      Vanilla: '0xc1245c5dca7885c73e32294140f1e5d30688c202',
-      Comp: '0x0c2de612982efd102803161fc7c74cca15db932c',
-      OZVotes: '0x2c8631584474e750cedf2fb6a904f2e84777aefe',
-      Whitelist: '0x34f0afff5a739bbf3e285615f50e40ddaaf2a829',
+      Vanilla: '0x5e58c59E37F6571353249B03Df825B9cdC8f8af1',
+      Comp: '0xc3482b52fE3B21caE9A34BF17E5808aC96319985',
+      OZVotes: '0x5b30b72f79B88f737cfc7B7e6afba8F33C8D5f2c',
+      Whitelist: '0xCE1cD69dA94974BcD6439489727E2471DD91BC32',
       ...additionalStrategies
     },
     ProposalValidations: {
-      VotingPower: '0x6d9d6d08ef6b26348bd18f1fc8d953696b7cf311'
+      VotingPower: '0x9fcff6d7b3E57E0f1C918160FbD7F70F33Ca5D21'
     },
     ExecutionStrategies: {
-      SimpleQuorumAvatar: '0xece4f6b01a2d7ff5a9765ca44162d453fc455e42',
-      SimpleQuorumTimelock: '0xf2a1c2f2098161af98b2cc7e382ab7f3ba86ebc4',
+      SimpleQuorumAvatar: '0x4d719A8131eC19B06b11b3049076d09F45527cC4',
+      SimpleQuorumTimelock: '0x13DE21a35fEd1C16E4c09FD1888186cb357A0ab2',
       Axiom: null,
       Isokratia: null,
       ...additionalExecutionStrategies
@@ -94,12 +94,34 @@ function createStarknetConfig(networkId: keyof typeof evmNetworks): EvmNetworkCo
 export const evmNetworks = {
   eth: createStandardConfig(1),
   gor: createStandardConfig(5),
-  sep: createStandardConfig(11155111, {
-    strategies: {
-      Axiom: '0xE59405D7d40df064E85FD02a4F2F2C527172a9c1',
-      Isokratia: '0xc674eCf233920aa3052738BFCDbDd0812AEE5A83'
+  sep: {
+    Meta: {
+      eip712ChainId: 11155111,
+      proxyFactory: '0xcE454707ce6516F19d3617017fB816bF8c5b8795',
+      masterSpace: '0xCEC35E76F2727133b84274d45e5D761200857251'
+    },
+    Authenticators: {
+      EthSig: '0x6bd991280717CE1e9bf4156b4125485c9872AF44',
+      EthTx: '0x3E93Eee429B20e7336D5c6467333879488704bc7'
+    },
+    Strategies: {
+      Vanilla: '0x5e58c59E37F6571353249B03Df825B9cdC8f8af1',
+      Comp: '0xc3482b52fE3B21caE9A34BF17E5808aC96319985',
+      OZVotes: '0x5b30b72f79B88f737cfc7B7e6afba8F33C8D5f2c',
+      Whitelist: '0xCE1cD69dA94974BcD6439489727E2471DD91BC32',
+      MerkleVoting: '0x97a80c1694D296F2e19b9654423e1e499BbC0537'
+    },
+    ProposalValidations: {
+      VotingPower: '0x9fcff6d7b3E57E0f1C918160FbD7F70F33Ca5D21',
+      WhitelistAndActiveProposals: '0x273E5bFA84b42d99346513Feba2aF2701970Fd16'
+    },
+    ExecutionStrategies: {
+      SimpleQuorumAvatar: '0x4d719A8131eC19B06b11b3049076d09F45527cC4',
+      SimpleQuorumTimelock: '0x13DE21a35fEd1C16E4c09FD1888186cb357A0ab2',
+      Axiom: null,
+      Isokratia: null
     }
-  }),
+  },
   matic: createStandardConfig(137),
   arb1: createStandardConfig(42161),
   'linea-testnet': {
