@@ -7,8 +7,8 @@ dataSources:
     network: sepolia
     source:
       abi: ProxyFactory
-      address: "0xcE454707ce6516F19d3617017fB816bF8c5b8795"
-      startBlock: 5380800 
+      address: "0x542922aF76e8b55076a54b15fD972156f5B143B0"
+      startBlock: 5386251
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

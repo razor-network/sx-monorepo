@@ -33,10 +33,10 @@ import {
 import { Space, ExecutionStrategy, ExecutionHash, Proposal, Vote, User } from '../generated/schema'
 import { updateStrategiesParsedMetadata, updateProposalValidationStrategy } from './helpers'
 
-const MASTER_SPACE = Address.fromString('0xC3031A7d3326E47D49BfF9D374d74f364B29CE4D')
-const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0xecE4f6b01a2d7FF5A9765cA44162D453fC455e42')
+const MASTER_SPACE = Address.fromString('0xB1870f2Dc79862c5a06090344bfbBCA07483dAEe')
+const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0x38afdA9bD192300C128C22278D71D492dB1Ac238')
 const MASTER_SIMPLE_QUORUM_TIMELOCK = Address.fromString(
-  '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4'
+  '0x6791408d253CF326BcA01a41ab909254a64F2cDa'
 )
 
 export function handleProxyDeployed(event: ProxyDeployed): void {
