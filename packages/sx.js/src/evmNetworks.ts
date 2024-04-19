@@ -45,7 +45,7 @@ function createStandardConfig(
   };
 }
 
-function createStarknetConfig(networkId: keyof typeof evmNetworks): EvmNetworkConfig {
+function createEvmConfig(networkId: keyof typeof evmNetworks): EvmNetworkConfig {
   const network = evmNetworks[networkId];
 
   const authenticators = {
@@ -94,6 +94,7 @@ function createStarknetConfig(networkId: keyof typeof evmNetworks): EvmNetworkCo
 export const evmNetworks = {
   eth: createStandardConfig(1),
   gor: createStandardConfig(5),
+  oeth: createStandardConfig(10),
   sep: {
     Meta: {
       eip712ChainId: 11155111,
@@ -127,34 +128,35 @@ export const evmNetworks = {
   'linea-testnet': {
     Meta: {
       eip712ChainId: 59140,
-      proxyFactory: '0x12a1fffffd70677939d61d641ea043bc9060c718',
-      masterSpace: '0x7cc62f8e9bf2b44ce704d2cdcd4aa8021d5a6f4b'
+      proxyFactory: '0x12A1FfFFfd70677939D61d641eA043bc9060c718',
+      masterSpace: '0x7cC62f8E9BF2b44ce704D2cdCd4aa8021d5A6f4B'
     },
     Authenticators: {
       EthSig: '0x3e3a68e0e70dbf78051109a9f379b7a7adec82f4',
       EthTx: '0xddb36b865a1021524b936fb29fcba5fac073db74'
     },
     Strategies: {
-      Vanilla: '0xeba53160c146cbf77a150e9a218d4c2de5db6b51',
-      Comp: '0x343baf4b44f7f79b14301cfa8068e3f8be7470de',
-      OZVotes: '0x4aaa33b4367dc5657854bd40738201651ec0cc7b',
-      Whitelist: '0x54449c058bbf0b777745944ea1a7b79786fbc958'
+      Vanilla: '0x3e3A68e0e70dBF78051109a9f379B7A7adec82f4',
+      Comp: '0x343Baf4b44F7f79b14301CFA8068E3F8BE7470De',
+      OZVotes: '0x4aAa33b4367dc5657854bD40738201651eC0cC7B',
+      Whitelist: '0x54449c058bBf0B777745944ea1A7b79786FBC958'
     },
     ProposalValidations: {
-      VotingPower: '0x6d9d6d08ef6b26348bd18f1fc8d953696b7cf311'
+      VotingPower: '0x6D9d6D08EF6b26348Bd18F1FC8D953696b7cf311'
     },
     ExecutionStrategies: {
-      SimpleQuorumAvatar: '0x177f163f8f789f0d9c5c7993728adb106a7b12d4',
-      SimpleQuorumTimelock: '0xdb86512e7e3a2d0b93b74b8fe3ffe8ad780791be',
+      SimpleQuorumAvatar: '0x177F163F8f789F0d9C5c7993728ADB106a7b12d4',
+      SimpleQuorumTimelock: '0xdb86512e7E3a2d0B93b74b8FE3fFE8AD780791BE',
       Axiom: null,
       Isokratia: null
     }
   }
 } as const;
 
-export const evmMainnet = createStarknetConfig('eth');
-export const evmGoerli = createStarknetConfig('gor');
-export const evmSepolia = createStarknetConfig('sep');
-export const evmPolygon = createStarknetConfig('matic');
-export const evmArbitrum = createStarknetConfig('arb1');
-export const evmLineaGoerli = createStarknetConfig('linea-testnet');
+export const evmMainnet = createEvmConfig('eth');
+export const evmGoerli = createEvmConfig('gor');
+export const evmSepolia = createEvmConfig('sep');
+export const evmOptimism = createEvmConfig('oeth');
+export const evmPolygon = createEvmConfig('matic');
+export const evmArbitrum = createEvmConfig('arb1');
+export const evmLineaGoerli = createEvmConfig('linea-testnet');

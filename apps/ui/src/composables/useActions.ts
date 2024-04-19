@@ -83,7 +83,9 @@ export function useActions() {
     if (await handleCommitEnvelope(envelope, networkId)) return;
 
     // TODO: unify send/soc to both return txHash under same property
-    if (envelope.signatureData || envelope.sig) {
+    if (envelope.payloadType === 'HIGHLIGHT_VOTE') {
+      console.log('Receipt', envelope.signatureData);
+    } else if (envelope.signatureData || envelope.sig) {
       const receipt = await network.actions.send(envelope);
       const hash = receipt.transaction_hash || receipt.hash;
 
@@ -91,6 +93,8 @@ export function useActions() {
 
       hash && uiStore.addPendingTransaction(hash, networkId);
     } else {
+      console.log('Receipt', envelope);
+
       uiStore.addPendingTransaction(envelope.transaction_hash || envelope.hash, networkId);
     }
   }
@@ -168,7 +172,7 @@ export function useActions() {
       predictedSpaceAddress: predictSpaceAddress(networkId, salt)
     });
 
-    return receipt.txId;
+    return receipt;
   }
 
   async function updateMetadata(space: Space, metadata: SpaceMetadata) {
@@ -179,10 +183,7 @@ export function useActions() {
       throw new Error(`${web3.value.type} is not supported for this actions`);
     }
 
-    const receipt = await network.actions.setMetadata(auth.web3, space, metadata);
-
-    console.log('Receipt', receipt);
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, space.network);
+    await wrapPromise(space.network, network.actions.setMetadata(auth.web3, space, metadata));
   }
 
   async function vote(proposal: Proposal, choice: Choice) {
@@ -271,6 +272,8 @@ export function useActions() {
     title: string,
     body: string,
     discussion: string,
+    type: VoteType,
+    choices: string[],
     executionStrategy: string | null,
     execution: Transaction[]
   ) {
@@ -279,7 +282,7 @@ export function useActions() {
       return false;
     }
 
-    const network = getReadWriteNetwork(space.network);
+    const network = getNetwork(space.network);
 
     const transactions = execution.map((tx: Transaction) => ({
       ...tx,
@@ -290,6 +293,8 @@ export function useActions() {
       title,
       body,
       discussion,
+      type,
+      choices: choices.filter(c => !!c),
       execution: transactions
     });
     if (!pinned || !pinned.cid) return false;
@@ -313,19 +318,19 @@ export function useActions() {
   }
 
   async function cancelProposal(proposal: Proposal) {
-    if (!web3.value.account) return await forceLogin();
+    if (!web3.value.account) {
+      await forceLogin();
+      return false;
+    }
 
-    const network = getReadWriteNetwork(proposal.network);
+    const network = getNetwork(proposal.network);
     if (!network.managerConnectors.includes(web3.value.type as Connector)) {
       throw new Error(`${web3.value.type} is not supported for this actions`);
     }
 
-    const receipt = await network.actions.cancelProposal(auth.web3, proposal);
-    console.log('Receipt', receipt);
+    await wrapPromise(proposal.network, network.actions.cancelProposal(auth.web3, proposal));
 
-    if (handleSafeEnvelope(receipt)) return;
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, proposal.network);
+    return true;
   }
 
   async function finalizeProposal(proposal: Proposal) {
@@ -334,23 +339,7 @@ export function useActions() {
 
     const network = getReadWriteNetwork(proposal.network);
 
-    const receipt = await network.actions.finalizeProposal(auth.web3, proposal);
-
-    console.log('Receipt', receipt);
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, proposal.network);
-  }
-
-  async function receiveProposal(proposal: Proposal) {
-    if (!web3.value.account) return await forceLogin();
-    if (web3.value.type === 'argentx') throw new Error('ArgentX is not supported');
-
-    const network = getReadWriteNetwork(proposal.network);
-    if (!network.hasReceive) throw new Error('Receive on this network is not supported');
-
-    const receipt = await network.actions.receiveProposal(auth.web3, proposal);
-    console.log('Receipt', receipt);
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, 'gor');
+    await wrapPromise(proposal.network, network.actions.finalizeProposal(auth.web3, proposal));
   }
 
   async function executeTransactions(proposal: Proposal) {
@@ -359,10 +348,7 @@ export function useActions() {
 
     const network = getReadWriteNetwork(proposal.network);
 
-    const receipt = await network.actions.executeTransactions(auth.web3, proposal);
-    console.log('Receipt', receipt);
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, proposal.network);
+    await wrapPromise(proposal.network, network.actions.executeTransactions(auth.web3, proposal));
   }
 
   async function executeQueuedProposal(proposal: Proposal) {
@@ -371,10 +357,7 @@ export function useActions() {
 
     const network = getReadWriteNetwork(proposal.network);
 
-    const receipt = await network.actions.executeQueuedProposal(auth.web3, proposal);
-    console.log('Receipt', receipt);
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, proposal.network);
+    await wrapPromise(proposal.network, network.actions.executeQueuedProposal(auth.web3, proposal));
   }
 
   async function vetoProposal(proposal: Proposal) {
@@ -383,10 +366,7 @@ export function useActions() {
 
     const network = getReadWriteNetwork(proposal.network);
 
-    const receipt = await network.actions.vetoProposal(auth.web3, proposal);
-    console.log('Receipt', receipt);
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, proposal.network);
+    await wrapPromise(proposal.network, network.actions.vetoProposal(auth.web3, proposal));
   }
 
   async function setVotingDelay(space: Space, votingDelay: number) {
@@ -397,16 +377,14 @@ export function useActions() {
       throw new Error(`${web3.value.type} is not supported for this actions`);
     }
 
-    const receipt = await network.actions.setVotingDelay(
-      auth.web3,
-      space,
-      getCurrentFromDuration(space.network, votingDelay)
+    await wrapPromise(
+      space.network,
+      network.actions.setVotingDelay(
+        auth.web3,
+        space,
+        getCurrentFromDuration(space.network, votingDelay)
+      )
     );
-    console.log('Receipt', receipt);
-
-    if (handleSafeEnvelope(receipt)) return;
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, space.network);
   }
 
   async function setMinVotingDuration(space: Space, minVotingDuration: number) {
@@ -417,16 +395,14 @@ export function useActions() {
       throw new Error(`${web3.value.type} is not supported for this actions`);
     }
 
-    const receipt = await network.actions.setMinVotingDuration(
-      auth.web3,
-      space,
-      getCurrentFromDuration(space.network, minVotingDuration)
+    await wrapPromise(
+      space.network,
+      network.actions.setMinVotingDuration(
+        auth.web3,
+        space,
+        getCurrentFromDuration(space.network, minVotingDuration)
+      )
     );
-    console.log('Receipt', receipt);
-
-    if (handleSafeEnvelope(receipt)) return;
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, space.network);
   }
 
   async function setMaxVotingDuration(space: Space, maxVotingDuration: number) {
@@ -437,16 +413,14 @@ export function useActions() {
       throw new Error(`${web3.value.type} is not supported for this actions`);
     }
 
-    const receipt = await network.actions.setMaxVotingDuration(
-      auth.web3,
-      space,
-      getCurrentFromDuration(space.network, maxVotingDuration)
+    await wrapPromise(
+      space.network,
+      network.actions.setMaxVotingDuration(
+        auth.web3,
+        space,
+        getCurrentFromDuration(space.network, maxVotingDuration)
+      )
     );
-    console.log('Receipt', receipt);
-
-    if (handleSafeEnvelope(receipt)) return;
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, space.network);
   }
 
   async function transferOwnership(space: Space, owner: string) {
@@ -457,12 +431,7 @@ export function useActions() {
       throw new Error(`${web3.value.type} is not supported for this actions`);
     }
 
-    const receipt = await network.actions.transferOwnership(auth.web3, space, owner);
-    console.log('Receipt', receipt);
-
-    if (handleSafeEnvelope(receipt)) return;
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, space.network);
+    await wrapPromise(space.network, network.actions.transferOwnership(auth.web3, space, owner));
   }
 
   async function updateStrategies(
@@ -480,20 +449,18 @@ export function useActions() {
       throw new Error(`${web3.value.type} is not supported for this actions`);
     }
 
-    const receipt = await network.actions.updateStrategies(
-      auth.web3,
-      space,
-      authenticatorsToAdd,
-      authenticatorsToRemove,
-      votingStrategiesToAdd,
-      votingStrategiesToRemove,
-      validationStrategy
+    await wrapPromise(
+      space.network,
+      network.actions.updateStrategies(
+        auth.web3,
+        space,
+        authenticatorsToAdd,
+        authenticatorsToRemove,
+        votingStrategiesToAdd,
+        votingStrategiesToRemove,
+        validationStrategy
+      )
     );
-    console.log('Receipt', receipt);
-
-    if (handleSafeEnvelope(receipt)) return;
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, space.network);
   }
 
   async function delegate(
@@ -506,16 +473,10 @@ export function useActions() {
 
     const network = getReadWriteNetwork(networkId);
 
-    const receipt = await network.actions.delegate(
-      auth.web3,
-      space,
+    await wrapPromise(
       networkId,
-      delegatee,
-      delegationContract
+      network.actions.delegate(auth.web3, space, networkId, delegatee, delegationContract)
     );
-    console.log('Receipt', receipt);
-
-    uiStore.addPendingTransaction(receipt.transaction_hash || receipt.hash, networkId);
 
     mixpanel.track('Delegate', {
       network: networkId,
@@ -534,7 +495,6 @@ export function useActions() {
     updateProposal: wrapWithErrors(updateProposal),
     cancelProposal: wrapWithErrors(cancelProposal),
     finalizeProposal: wrapWithErrors(finalizeProposal),
-    receiveProposal: wrapWithErrors(receiveProposal),
     executeTransactions: wrapWithErrors(executeTransactions),
     executeQueuedProposal: wrapWithErrors(executeQueuedProposal),
     vetoProposal: wrapWithErrors(vetoProposal),

@@ -5,6 +5,8 @@ import {
   Address,
   DataSourceContext,
   BigDecimal,
+  crypto,
+  ByteArray,
 } from '@graphprotocol/graph-ts'
 import {
   StrategiesParsedMetadataData as StrategiesParsedMetadataDataTemplate,
@@ -21,6 +23,22 @@ const VOTING_POWER_VALIDATION_STRATEGY = Address.fromString(
   '0x6D9d6D08EF6b26348Bd18F1FC8D953696b7cf311'
 )
 const VOTING_POWER_VALIDATION_STRATEGY_PARAMS_SIGNATURE = '(uint256, (address,bytes)[])'
+
+export function toChecksumAddress(address: string): string {
+  const rawAddress = address.toLowerCase().replace('0x', '')
+  const hash = crypto.keccak256(ByteArray.fromUTF8(rawAddress)).toHexString().replace('0x', '')
+
+  let ret = '0x'
+  for (let i = 0; i < rawAddress.length; i++) {
+    if (parseInt(hash.charAt(i), 16) >= 8) {
+      ret += rawAddress.charAt(i).toUpperCase()
+    } else {
+      ret += rawAddress.charAt(i)
+    }
+  }
+
+  return ret
+}
 
 export function decodeProposalValidationParams(params: Bytes): ethereum.Value | null {
   let paramsBytes = Bytes.fromByteArray(
@@ -55,10 +73,10 @@ export function updateProposalValidationStrategy(
   metadataUri: string,
   blockNumber: BigInt
 ): void {
-  space.validation_strategy = validationStrategyAddress
+  space.validation_strategy = toChecksumAddress(validationStrategyAddress.toHexString())
   space.validation_strategy_params = validationStrategyParams.toHexString()
 
-  if (space.validation_strategy.equals(VOTING_POWER_VALIDATION_STRATEGY)) {
+  if (validationStrategyAddress.equals(VOTING_POWER_VALIDATION_STRATEGY)) {
     space.voting_power_validation_strategy_metadata = metadataUri
 
     let params = decodeProposalValidationParams(validationStrategyParams)
@@ -67,10 +85,9 @@ export function updateProposalValidationStrategy(
       space.proposal_threshold = new BigDecimal(getProposalValidationThreshold(params))
       space.voting_power_validation_strategy_strategies = getProposalValidationStrategies(
         params
-      ).map<Bytes>((strategy) => strategy)
-      space.voting_power_validation_strategy_strategies_params = getProposalValidationStrategiesParams(
-        params
-      ).map<string>((params) => params.toHexString())
+      ).map<string>((strategy) => toChecksumAddress(strategy.toHexString()))
+      space.voting_power_validation_strategy_strategies_params =
+        getProposalValidationStrategiesParams(params).map<string>((params) => params.toHexString())
     } else {
       space.proposal_threshold = new BigDecimal(new BigInt(0))
       space.voting_power_validation_strategy_strategies = []

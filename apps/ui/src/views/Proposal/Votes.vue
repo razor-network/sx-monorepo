@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getNetwork, offchainNetworks } from '@/networks';
-import { shortenAddress, _t, _rt, _n } from '@/helpers/utils';
+import { shortenAddress, _t, _rt, _n, getChoiceText } from '@/helpers/utils';
 import { Proposal as ProposalType, Vote } from '@/types';
 
 const LIMIT = 20;
@@ -171,7 +171,7 @@ watch([sortBy, choiceFilter], () => {
           </template>
           <tr v-for="(vote, i) in votes" :key="i" class="border-b relative align-middle">
             <div
-              class="absolute top-0 -bottom-[1px] right-0 pointer-events-none"
+              class="absolute top-0 -bottom-[1px] left-0 pointer-events-none"
               :style="{
                 width: `${((100 / proposal.scores_total) * vote.vp).toFixed(2)}%`
               }"
@@ -209,26 +209,39 @@ watch([sortBy, choiceFilter], () => {
               </div>
             </td>
             <td class="relative">
-              <div
-                v-if="proposal.type !== 'basic'"
-                class="truncate"
-                :title="proposal.choices[vote.choice - 1]"
-              >
-                {{ proposal.choices[vote.choice - 1] }}
+              <template v-if="!!props.proposal.privacy && !props.proposal.completed">
+                <div class="hidden md:block">
+                  <div class="flex gap-1 items-center">
+                    <span class="text-skin-heading leading-6">Encrypted choice</span>
+                    <IH-lock-closed class="w-[16px] h-[16px] shrink-0" />
+                  </div>
+                </div>
+                <UiTooltip title="Encrypted choice" class="cursor-help md:hidden">
+                  <IH-lock-closed class="w-[16px] h-[16px]" />
+                </UiTooltip>
+              </template>
+              <div v-else>
+                <UiTooltip
+                  v-if="proposal.type !== 'basic'"
+                  class="truncate !block"
+                  :title="getChoiceText(proposal.choices, vote.choice)"
+                >
+                  {{ getChoiceText(proposal.choices, vote.choice) }}
+                </UiTooltip>
+                <UiButton
+                  v-else
+                  class="!w-[40px] !h-[40px] !px-0 cursor-default bg-transparent"
+                  :class="{
+                    '!text-skin-success !border-skin-success': vote.choice === 1,
+                    '!text-skin-danger !border-skin-danger': vote.choice === 2,
+                    '!text-gray-500 !border-gray-500': vote.choice === 3
+                  }"
+                >
+                  <IH-check v-if="vote.choice === 1" class="inline-block" />
+                  <IH-x v-else-if="vote.choice === 2" class="inline-block" />
+                  <IH-minus-sm v-else class="inline-block" />
+                </UiButton>
               </div>
-              <UiButton
-                v-else
-                class="!w-[40px] !h-[40px] !px-0 cursor-default bg-transparent"
-                :class="{
-                  '!text-skin-success !border-skin-success': vote.choice === 1,
-                  '!text-skin-danger !border-skin-danger': vote.choice === 2,
-                  '!text-gray-500 !border-gray-500': vote.choice === 3
-                }"
-              >
-                <IH-check v-if="vote.choice === 1" class="inline-block" />
-                <IH-x v-else-if="vote.choice === 2" class="inline-block" />
-                <IH-minus-sm v-else class="inline-block" />
-              </UiButton>
             </td>
             <td class="relative pr-2 text-right">
               <div class="text-skin-link leading-[22px]">

@@ -184,6 +184,21 @@ input {
   }
 }
 
+.choice-border {
+  &._1 {
+    @apply border-skin-success;
+  }
+  &._2 {
+    @apply border-skin-danger;
+  }
+  &._3 {
+    @apply border-skin-text;
+  }
+  &._quorum {
+    @apply border-skin-text;
+  }
+}
+
 #app {
   height: 100%;
 }
@@ -191,6 +206,17 @@ input {
 ::placeholder {
   color: rgba(var(--text)) !important;
   opacity: 0.6 !important;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .eyebrow {
@@ -263,7 +289,7 @@ input {
   }
 
   .s-label {
-    @apply absolute left-2 top-[4px] px-2 text-[17px];
+    @apply absolute px-3 mt-1 text-[17px];
   }
 
   .s-input {
@@ -301,4 +327,22 @@ input {
 
 .s-dialog {
   z-index: 41 !important;
+}
+
+// Vue tippy
+
+@import 'tippy.js/dist/tippy.css';
+@import 'tippy.js/dist/border.css';
+@import 'tippy.js/dist/svg-arrow.css';
+
+.tippy-box[data-theme~='sx'] {
+  @apply bg-skin-border text-skin-link px-[14px] py-2 w-max z-50 rounded text-[17px] leading-5 transition-opacity;
+
+  .tippy-content {
+    @apply p-0;
+  }
+
+  .tippy-arrow {
+    color: rgba(var(--border));
+  }
 }

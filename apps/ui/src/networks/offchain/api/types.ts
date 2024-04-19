@@ -1,7 +1,9 @@
-import { VoteType } from '@/types';
+import { Privacy, VoteType } from '@/types';
 
 export type ApiSpace = {
   id: string;
+  verified: boolean;
+  turbo: boolean;
   admins: string[];
   members: string[];
   name: string;
@@ -10,9 +12,11 @@ export type ApiSpace = {
   website: string;
   twitter: string;
   github: string;
+  coingecko: string;
   symbol: string;
   treasuries: [
     {
+      name: string;
       network: string;
       address: string;
     }
@@ -38,6 +42,7 @@ export type ApiSpace = {
   };
   proposalsCount: number;
   votesCount: number;
+  followersCount: number;
 };
 
 export type ApiProposal = {
@@ -48,6 +53,7 @@ export type ApiProposal = {
     name: string;
     network: string;
     admins: string[];
+    moderators: string[];
     symbol: string;
   };
   type: VoteType;
@@ -67,6 +73,7 @@ export type ApiProposal = {
   created: number;
   updated: number | null;
   votes: number;
+  privacy: Privacy;
 };
 
 export type ApiVote = {
@@ -79,7 +86,7 @@ export type ApiVote = {
   proposal: {
     id: string;
   };
-  choice: number | number[];
+  choice: number | number[] | Record<string, number>;
   vp: number;
   created: number;
 };

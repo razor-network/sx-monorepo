@@ -84,6 +84,8 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
   return {
     ...space,
     network: networkId,
+    verified: false,
+    turbo: false,
     name: space.metadata.name,
     avatar: space.metadata.avatar,
     cover: space.metadata.cover,
@@ -93,7 +95,15 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
     twitter: space.metadata.twitter,
     discord: space.metadata.discord,
     voting_power_symbol: space.metadata.voting_power_symbol,
-    wallet: space.metadata.wallet,
+    treasuries: space.metadata.treasuries.map(treasury => {
+      const { name, network, address } = JSON.parse(treasury);
+
+      return {
+        name,
+        network,
+        address
+      };
+    }),
     delegations: space.metadata.delegations.map(delegation => {
       const { name, api_type, api_url, contract } = JSON.parse(delegation);
 
@@ -109,6 +119,7 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
     }),
     executors: space.metadata.executors,
     executors_types: space.metadata.executors_types,
+    executors_strategies: space.metadata.executors_strategies,
     voting_power_validation_strategies_parsed_metadata: processStrategiesMetadata(
       space.voting_power_validation_strategies_parsed_metadata
     ),
@@ -144,9 +155,13 @@ function formatProposal(proposal: ApiProposal, networkId: NetworkID, current: nu
     body: proposal.metadata.body,
     discussion: proposal.metadata.discussion,
     execution: formatExecution(proposal.metadata.execution),
-    has_execution_window_opened: proposal.min_end <= current,
+    has_execution_window_opened:
+      proposal.execution_strategy_type === 'Axiom'
+        ? proposal.max_end <= current
+        : proposal.min_end <= current,
     state: getProposalState(proposal, current),
-    network: networkId
+    network: networkId,
+    privacy: null
   };
 }
 
@@ -257,11 +272,12 @@ export function createApi(uri: string, networkId: NetworkID, opts: ApiOptions = 
         return vote;
       });
     },
-    loadUserVotes: async (voter: string): Promise<{ [key: string]: Vote }> => {
+    loadUserVotes: async (spaceId: string, voter: string): Promise<{ [key: string]: Vote }> => {
       const { data } = await apollo.query({
         query: USER_VOTES_QUERY,
         variables: {
-          voter: voter.toLowerCase()
+          spaceId,
+          voter
         }
       });
 
