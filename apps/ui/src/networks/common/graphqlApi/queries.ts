@@ -13,10 +13,16 @@ const SPACE_FRAGMENT = gql`
       twitter
       discord
       voting_power_symbol
-      wallet
+      treasuries
       delegations
       executors
       executors_types
+      executors_strategies {
+        id
+        type
+        treasury_chain
+        treasury
+      }
     }
     controller
     voting_delay
@@ -120,6 +126,7 @@ const PROPOSAL_FRAGMENT = gql`
     execution_tx
     veto_tx
     vote_count
+    execution_ready
     executed
     vetoed
     completed
@@ -177,8 +184,8 @@ export const VOTES_QUERY = gql`
 `;
 
 export const USER_VOTES_QUERY = gql`
-  query ($voter: String) {
-    votes(where: { voter: $voter }) {
+  query ($spaceId: String, $voter: String) {
+    votes(where: { space: $spaceId, voter: $voter }) {
       id
       voter {
         id

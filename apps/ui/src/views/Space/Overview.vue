@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import autolinker from 'autolinker';
 import { _n, compareAddresses, sanitizeUrl } from '@/helpers/utils';
 import { offchainNetworks } from '@/networks';
 import { Space } from '@/types';
 import ICX from '~icons/c/x';
 import ICDiscord from '~icons/c/discord';
 import ICGithub from '~icons/c/github';
+import ICCoingecko from '~icons/c/coingecko';
 import IHGlobeAlt from '~icons/heroicons-outline/globe-alt';
 
 const PROPOSALS_LIMIT = 4;
@@ -27,25 +29,32 @@ const spaceIdComposite = `${props.space.network}:${props.space.id}`;
 const spaceStarred = computed(() => spacesStore.starredSpacesIds.includes(spaceIdComposite));
 const isController = computed(() => compareAddresses(props.space.controller, web3.value.account));
 
-const externalUrl = computed(() => sanitizeUrl(props.space.external_url));
-const twitterUrl = computed(() =>
-  props.space.twitter ? sanitizeUrl(`https://twitter.com/${props.space.twitter}`) : null
-);
-const discordUrl = computed(() =>
-  props.space.discord ? sanitizeUrl(`https://discord.gg/${props.space.discord}`) : null
-);
-const githubUrl = computed(() =>
-  props.space.github ? sanitizeUrl(`https://github.com/${props.space.github}`) : null
-);
+const socials = computed(() =>
+  [
+    { key: 'external_url', icon: IHGlobeAlt, urlFormat: '$' },
+    { key: 'twitter', icon: ICX, urlFormat: 'https://twitter.com/$' },
+    { key: 'discord', icon: ICDiscord, urlFormat: 'https://discord.gg/$' },
+    { key: 'coingecko', icon: ICCoingecko, urlFormat: 'https://www.coingecko.com/coins/$' },
+    { key: 'github', icon: ICGithub, urlFormat: 'https://github.com/$' }
+  ]
+    .map(({ key, icon, urlFormat }) => {
+      const value = props.space[key];
+      const href = value ? sanitizeUrl(urlFormat.replace('$', value)) : null;
 
-const socials = computed(() => [
-  { href: externalUrl.value, icon: IHGlobeAlt },
-  { href: twitterUrl.value, icon: ICX },
-  { href: discordUrl.value, icon: ICDiscord },
-  { href: githubUrl.value, icon: ICGithub }
-]);
+      return href ? { key, icon, href } : {};
+    })
+    .filter(social => social.href)
+);
 
 const proposalsRecord = computed(() => proposalsStore.proposals[spaceIdComposite]);
+
+const autolinkedAbout = computed(() =>
+  autolinker.link(props.space.about || '', {
+    sanitizeHtml: true,
+    phone: false,
+    replaceFn: match => match.buildTag().setAttr('href', sanitizeUrl(match.getAnchorHref())!)
+  })
+);
 
 watchEffect(() => setTitle(props.space.name));
 </script>
@@ -54,11 +63,7 @@ watchEffect(() => setTitle(props.space.name));
   <div>
     <div class="relative bg-skin-border h-[156px] md:h-[140px] -mb-[86px] md:-mb-[70px] top-[-1px]">
       <div class="w-full h-full overflow-hidden">
-        <SpaceCover
-          v-if="props.space.cover"
-          :space="props.space"
-          class="!rounded-none w-full min-h-full object-cover"
-        />
+        <SpaceCover :space="props.space" class="!rounded-none w-full min-h-full" />
       </div>
       <div class="relative bg-skin-bg h-[16px] top-[-16px] rounded-t-[16px] md:hidden" />
       <div class="absolute right-4 top-4 space-x-2">
@@ -92,27 +97,28 @@ watchEffect(() => setTitle(props.space.name));
             class="relative mb-2 border-[4px] border-skin-bg !bg-skin-border !rounded-lg left-[-4px]"
           />
         </router-link>
-        <h1 v-text="space.name" />
+        <div class="flex items-center">
+          <h1 v-text="space.name" />
+          <UiBadgeVerified class="ml-1 top-[2px]" :verified="space.verified" :turbo="space.turbo" />
+        </div>
         <div class="mb-3">
           <b class="text-skin-link">{{ _n(space.proposal_count) }}</b> proposals ·
           <b class="text-skin-link">{{ _n(space.vote_count, 'compact') }}</b> votes
-        </div>
-        <div class="max-w-[540px] text-skin-link text-md leading-[26px] mb-3">
-          <span v-if="space.about">
-            {{ space.about }}
+          <span v-if="offchainNetworks.includes(space.network)">
+            · <b class="text-skin-link">{{ _n(space.follower_count, 'compact') }}</b> followers
           </span>
         </div>
-        <div class="space-x-2 flex">
-          <span v-for="(social, i) in socials" :key="i">
-            <a
-              v-if="social.href"
-              :href="social.href"
-              target="_blank"
-              class="text-[#606060] hover:text-skin-link"
-            >
+        <div
+          v-if="space.about"
+          class="max-w-[540px] text-skin-link text-md leading-[26px] mb-3"
+          v-html="autolinkedAbout"
+        />
+        <div v-if="socials.length > 0" class="space-x-2 flex">
+          <template v-for="social in socials" :key="social.key">
+            <a :href="social.href" target="_blank" class="text-[#606060] hover:text-skin-link">
               <component :is="social.icon" class="w-[26px] h-[26px]" />
             </a>
-          </span>
+          </template>
         </div>
       </div>
     </div>

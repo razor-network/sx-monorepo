@@ -6,7 +6,7 @@ import { ETH_CONTRACT } from '@/helpers/constants';
 import { clone } from '@/helpers/utils';
 import { getValidator } from '@/helpers/validation';
 import { Token } from '@/helpers/alchemy';
-import { Transaction } from '@/types';
+import { Contact, Transaction } from '@/types';
 
 const DEFAULT_FORM_STATE = {
   to: '',
@@ -38,6 +38,7 @@ const props = defineProps<{
   address: string;
   network: number;
   networkId: string;
+  extraContacts?: Contact[];
   initialState?: any;
 }>();
 
@@ -233,6 +234,7 @@ watchEffect(async () => {
         v-else-if="pickerType === 'contact'"
         :loading="false"
         :search-value="searchValue"
+        :extra-contacts="extraContacts"
         @pick="
           form.to = $event;
           showPicker = false;
@@ -263,8 +265,8 @@ watchEffect(async () => {
           </div>
         </button>
       </div>
-      <div class="grid grid-cols-2 gap-2.5">
-        <div class="relative">
+      <div class="flex gap-2.5">
+        <div class="relative w-full">
           <UiInputNumber
             :model-value="form.amount"
             :definition="{
@@ -277,6 +279,8 @@ watchEffect(async () => {
           <a class="absolute right-[16px] top-[4px]" @click="handleMaxClick" v-text="'max'" />
         </div>
         <UiInputNumber
+          v-if="currentToken.price !== 0"
+          class="w-full"
           :model-value="form.value"
           :definition="{ type: 'number', title: 'USD', examples: ['0'] }"
           @update:model-value="handleValueUpdate"

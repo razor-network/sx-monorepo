@@ -49,6 +49,8 @@ export type StrategyTemplate = {
     params: string,
     metadata: StrategyParsedMetadata | null
   ) => Promise<Record<string, any>>;
+  deployConnectors?: Connector[];
+  deployNetworkId?: NetworkID;
   deploy?: (
     client: any,
     signer: Signer,
@@ -75,12 +77,16 @@ export type VotingPower = {
   token: string | null;
   symbol: string;
   chainId?: number;
+  swapLink?: string;
 };
+
+export type VotingPowerStatus = 'loading' | 'success' | 'error';
 
 // TODO: make sx.js accept Signer instead of Web3Provider | Wallet
 
 export type ReadOnlyNetworkActions = {
   getVotingPower(
+    spaceId: string,
     strategiesAddresses: string[],
     strategiesParams: any[],
     strategiesMetadata: StrategyParsedMetadata[],
@@ -96,6 +102,17 @@ export type ReadOnlyNetworkActions = {
     executionStrategy: string | null,
     transactions: MetaTransaction[]
   ): Promise<any>;
+  updateProposal(
+    web3: Web3Provider,
+    connectorType: Connector,
+    account: string,
+    space: Space,
+    proposalId: number | string,
+    cid: string,
+    executionStrategy: string | null,
+    transactions: MetaTransaction[]
+  ): Promise<any>;
+  cancelProposal(web3: Web3Provider, proposal: Proposal);
   vote(
     web3: Web3Provider,
     connectorType: Connector,
@@ -132,19 +149,7 @@ export type NetworkActions = ReadOnlyNetworkActions & {
     }
   );
   setMetadata(web3: Web3Provider, space: Space, metadata: SpaceMetadata);
-  updateProposal(
-    web3: Web3Provider,
-    connectorType: Connector,
-    account: string,
-    space: Space,
-    proposalId: number | string,
-    cid: string,
-    executionStrategy: string | null,
-    transactions: MetaTransaction[]
-  );
-  cancelProposal(web3: Web3Provider, proposal: Proposal);
   finalizeProposal(web3: Web3Provider, proposal: Proposal);
-  receiveProposal(web3: Web3Provider, proposal: Proposal);
   executeTransactions(web3: Web3Provider, proposal: Proposal);
   executeQueuedProposal(web3: Web3Provider, proposal: Proposal);
   vetoProposal(web3: Web3Provider, proposal: Proposal);
@@ -177,7 +182,7 @@ export type NetworkApi = {
     filter?: 'any' | 'for' | 'against' | 'abstain',
     sortBy?: 'vp-desc' | 'vp-asc' | 'created-desc' | 'created-asc'
   ): Promise<Vote[]>;
-  loadUserVotes(voter: string): Promise<{ [key: string]: Vote }>;
+  loadUserVotes(spaceId: string, voter: string): Promise<{ [key: string]: Vote }>;
   loadProposals(
     spaceId: string,
     paginationOpts: PaginationOpts,
@@ -232,7 +237,6 @@ type BaseNetwork = {
   baseChainId: number;
   currentChainId: number;
   baseNetworkId?: NetworkID;
-  hasReceive: boolean;
   supportsSimulation: boolean;
   managerConnectors: Connector[];
   api: NetworkApi;
