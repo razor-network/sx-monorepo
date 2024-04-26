@@ -4,7 +4,7 @@ import { Contract } from '@ethersproject/contracts';
 import MerkleVotingABI from '../abis/MerkleVoting.json';
 
 const MERKLE_VOTING_RPC_PROVIDER = 'https://ethereum-sepolia-rpc.publicnode.com';
-const MERKLE_VOTING_API = 'http://localhost:3000';
+const MERKLE_VOTING_API = 'http://34.163.80.4';
 
 export default async function getMerkleVotingParams(
   strategyAddress: string,
