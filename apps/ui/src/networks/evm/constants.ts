@@ -16,6 +16,8 @@ import IHUserCircle from '~icons/heroicons-outline/user-circle';
 import IHLightningBolt from '~icons/heroicons-outline/lightning-bolt';
 import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
+export const MAX_MERKLE_VOTING_STRATEGIES = 10;
+
 export function createConstants(networkId: NetworkID) {
   const config = evmNetworks[networkId];
   if (!config) throw new Error(`Unsupported network ${networkId}`);
@@ -94,7 +96,7 @@ export function createConstants(networkId: NetworkID) {
 
   const EDITOR_PROPOSAL_VALIDATIONS = [
     {
-      address: config.ProposalValidations.VotingPower,
+      address: config.ProposalValidations.WhitelistAndActiveProposalsLimiter,
       type: 'VotingPower',
       name: 'Voting power',
       icon: IHLightningBolt,
@@ -156,6 +158,55 @@ export function createConstants(networkId: NetworkID) {
         }
       }
     }
+    // {
+    //   address: config.ProposalValidations.WhitelistAndActiveProposalsLimiter,
+    //   type: 'WhitelistAndActiveProposals',
+    //   name: 'Whitelist and active proposals',
+    //   icon: IHLightningBolt,
+    //   validate: (params: Record<string, any>) => {
+    //     return params?.strategies?.length > 0;
+    //   },
+    //   generateSummary: (params: Record<string, any>) => `(${params.threshold})`,
+    //   generateParams: (params: Record<string, any>) => {
+    //     const abiCoder = new AbiCoder();
+
+    //     const strategies = params.strategies.map((strategy: StrategyConfig) => {
+    //       console.log('generateParams called');
+    //       console.log(strategy);
+    //       return {
+    //         addr: strategy.address,
+    //         params: strategy.generateParams ? strategy.generateParams(strategy.params)[0] : '0x00'
+    //       };
+    //     });
+
+    //     return [
+    //       abiCoder.encode(
+    //         ['uint256', 'tuple(address addr, bytes params)[]'],
+    //         [params.threshold, strategies]
+    //       )
+    //     ];
+    //   },
+    //   parseParams: async (params: string) => {
+    //     const abiCoder = new AbiCoder();
+
+    //     return {
+    //       threshold: abiCoder.decode(['uint256', 'tuple(address addr, bytes params)[]'], params)[0]
+    //     };
+    //   },
+    //   paramsDefinition: {
+    //     type: 'object',
+    //     title: 'Params',
+    //     additionalProperties: false,
+    //     required: ['threshold'],
+    //     properties: {
+    //       threshold: {
+    //         type: 'integer',
+    //         title: 'Proposal threshold',
+    //         examples: ['1']
+    //       }
+    //     }
+    //   }
+    // }
   ];
 
   const EDITOR_VOTING_STRATEGIES = [
@@ -188,6 +239,40 @@ export function createConstants(networkId: NetworkID) {
           symbol: {
             type: 'string',
             maxLength: MAX_SYMBOL_LENGTH,
+            title: 'Symbol',
+            examples: ['e.g. VP']
+          }
+        }
+      }
+    },
+    {
+      address: config.Strategies.MerkleVoting,
+      name: 'New Merkle Voting',
+      about:
+        'A strategy that gives one voting power to anyone. It should only be used for testing purposes and not in production.',
+      icon: IHBeaker,
+      generateMetadata: async (params: Record<string, any>) => ({
+        name: 'MerkleVoting',
+        properties: {
+          symbol: params.proposalIndex,
+          decimals: 0
+        }
+      }),
+      parseParams: async (params: string, metadata: StrategyParsedMetadata | null) => {
+        if (!metadata) throw new Error('Missing metadata');
+
+        return {
+          proposalIndex: metadata.symbol
+        };
+      },
+      paramsDefinition: {
+        type: 'object',
+        title: 'Params',
+        additionalProperties: false,
+        required: [],
+        properties: {
+          symbol: {
+            type: 'integer',
             title: 'Symbol',
             examples: ['e.g. VP']
           }
@@ -377,6 +462,44 @@ export function createConstants(networkId: NetworkID) {
             maxLength: MAX_SYMBOL_LENGTH,
             title: 'Symbol',
             examples: ['e.g. UNI']
+          }
+        }
+      }
+    },
+    {
+      address: config.Strategies.MerkleVoting,
+      name: 'Merkle Voting',
+      about:
+        'Calculate scores based on a Merkle tree of votes. The tree is generated off-chain and the root is stored on-chain.',
+      icon: IHCode,
+      // generateSummary: (params: Record<string, any>) =>
+      //   `(${shorten(params.contractAddress)}, ${params.decimals})`,
+      generateParams: (params: Record<string, any>) => [params.contractAddress],
+      generateMetadata: async (params: Record<string, any>) => ({
+        name: 'Merkle Voting',
+        properties: {
+          symbol: params.symbol,
+          decimals: 0
+        }
+      }),
+      parseParams: async (params: string, metadata: StrategyParsedMetadata | null) => {
+        if (!metadata) throw new Error('Missing metadata');
+
+        return {
+          symbol: metadata.symbol
+        };
+      },
+      paramsDefinition: {
+        type: 'object',
+        title: 'Params',
+        additionalProperties: false,
+        required: [],
+        properties: {
+          symbol: {
+            type: 'string',
+            maxLength: MAX_SYMBOL_LENGTH,
+            title: 'Symbol',
+            examples: ['e.g. VP']
           }
         }
       }

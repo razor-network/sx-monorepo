@@ -143,6 +143,18 @@ export function useActions() {
     executionStrategies: StrategyConfig[],
     controller: string
   ) {
+    console.log({
+      log: 'CREATE SPACE',
+      networkId,
+      salt,
+      metadata,
+      settings,
+      authenticators,
+      validationStrategy,
+      votingStrategies,
+      executionStrategies,
+      controller
+    });
     if (!web3.value.account) {
       forceLogin();
       return false;

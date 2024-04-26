@@ -30,6 +30,7 @@ function createStandardConfig(
       Comp: '0xc3482b52fE3B21caE9A34BF17E5808aC96319985',
       OZVotes: '0x5b30b72f79B88f737cfc7B7e6afba8F33C8D5f2c',
       Whitelist: '0xCE1cD69dA94974BcD6439489727E2471DD91BC32',
+      MerkleVoting: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29',
       ...additionalStrategies
     },
     ProposalValidations: {
@@ -69,6 +70,9 @@ function createEvmConfig(networkId: keyof typeof evmNetworks): EvmNetworkConfig 
     },
     [network.Strategies.Whitelist]: {
       type: 'whitelist'
+    },
+    [network.Strategies.MerkleVoting]: {
+      type: 'merkleVoting'
     }
   } as const;
 
@@ -114,7 +118,7 @@ export const evmNetworks = {
     },
     ProposalValidations: {
       VotingPower: '0x975201328596612a8F46263D4216355B6D94DFF7',
-      WhitelistAndActiveProposals: '0xc72dC228cB23871E24C12439D04a8792a888333d'
+      WhitelistAndActiveProposalsLimiter: '0xc72dC228cB23871E24C12439D04a8792a888333d'
     },
     ExecutionStrategies: {
       SimpleQuorumAvatar: '0x38afdA9bD192300C128C22278D71D492dB1Ac238',
@@ -139,7 +143,8 @@ export const evmNetworks = {
       Vanilla: '0x3e3A68e0e70dBF78051109a9f379B7A7adec82f4',
       Comp: '0x343Baf4b44F7f79b14301CFA8068E3F8BE7470De',
       OZVotes: '0x4aAa33b4367dc5657854bD40738201651eC0cC7B',
-      Whitelist: '0x54449c058bBf0B777745944ea1A7b79786FBC958'
+      Whitelist: '0x54449c058bBf0B777745944ea1A7b79786FBC958',
+      MerkleVoting: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29'
     },
     ProposalValidations: {
       VotingPower: '0x6D9d6D08EF6b26348Bd18F1FC8D953696b7cf311'
