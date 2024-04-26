@@ -12,8 +12,16 @@ import TimelockExecutionStrategyAbi from './abis/TimelockExecutionStrategy.json'
 import AxiomExecutionStrategyAbi from './abis/AxiomExecutionStrategy.json';
 import IsokratiaExecutionStrategyAbi from './abis/IsokratiaExecutionStrategy.json';
 import type { Signer } from '@ethersproject/abstract-signer';
-import type { Propose, UpdateProposal, Vote, Envelope, AddressConfig } from '../types';
+import type {
+  Propose,
+  UpdateProposal,
+  Vote,
+  Envelope,
+  AddressConfig,
+  StrategyConfig
+} from '../types';
 import type { EvmNetworkConfig } from '../../../types';
+import { getNextProposalId } from '../../../utils/space';
 
 type SpaceParams = {
   controller: string;
@@ -312,6 +320,17 @@ export class EthereumTx {
       signer
     );
 
+    console.log({
+      networkConfig: this.networkConfig,
+      proposalValidationStrategy,
+      proposalValidationStrategyMetadataUri,
+      daoUri,
+      metadataUri,
+      authenticators,
+      votingStrategies,
+      votingStrategiesMetadata
+    });
+
     const functionData = spaceInterface.encodeFunctionData('initialize', [
       [
         controller,
@@ -337,6 +356,7 @@ export class EthereumTx {
       this.networkConfig.masterSpace,
       salt
     );
+    console.log({ predicatedAddress: address });
     const response = await proxyFactoryContract.deployProxy(
       this.networkConfig.masterSpace,
       functionData,
@@ -370,7 +390,11 @@ export class EthereumTx {
     { signer, envelope }: { signer: Signer; envelope: Envelope<Propose> },
     opts: CallOptions = {}
   ) {
+    console.log('Calling propose here!!!');
     const proposerAddress = envelope.signatureData?.address || (await signer.getAddress());
+    const { root, snapshotBlock } = envelope.data;
+
+    console.log({ envelope, proposerAddress });
 
     const userStrategies = await getStrategiesWithParams(
       'propose',
@@ -380,13 +404,26 @@ export class EthereumTx {
       this.networkConfig
     );
 
+    const proposalId = await getNextProposalId(envelope.data.space);
+
+    console.log({ proposalId });
+
+    console.log({ userStrategies });
     const abiCoder = new AbiCoder();
+    // TODO: Fetch proposalId from Space contract using nextProposalId
+    // const proposalId = 2;
+
+    const encodedData = abiCoder.encode(
+      ['bytes32', 'uint256', 'uint256'],
+      [root, BigInt(snapshotBlock), BigInt(proposalId)]
+    );
+
     const spaceInterface = new Interface(SpaceAbi);
     const functionData = spaceInterface.encodeFunctionData('propose', [
       proposerAddress,
       envelope.data.metadataUri,
       envelope.data.executionStrategy,
-      abiCoder.encode(['tuple(int8 index, bytes params)[]'], [userStrategies])
+      encodedData
     ]);
 
     const selector = functionData.slice(0, 10);
@@ -445,13 +482,20 @@ export class EthereumTx {
   ) {
     const voterAddress = envelope.signatureData?.address || (await signer.getAddress());
 
+    const customUserVotingStrategies: StrategyConfig[] = [
+      envelope.data.strategies[envelope.data.proposal]
+    ] as StrategyConfig[];
+
+    //TODO: Find a user strategy that needs to be send to the contract
     const userVotingStrategies = await getStrategiesWithParams(
-      'propose',
-      envelope.data.strategies,
+      'vote',
+      customUserVotingStrategies,
       voterAddress,
       envelope.data,
       this.networkConfig
     );
+
+    console.log({ userVotingStrategies });
 
     const spaceInterface = new Interface(SpaceAbi);
     const functionData = spaceInterface.encodeFunctionData('vote', [

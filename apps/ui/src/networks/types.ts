@@ -100,7 +100,9 @@ export type ReadOnlyNetworkActions = {
     space: Space,
     cid: string,
     executionStrategy: string | null,
-    transactions: MetaTransaction[]
+    transactions: MetaTransaction[],
+    root: string,
+    snapshotBlock: number
   ): Promise<any>;
   updateProposal(
     web3: Web3Provider,

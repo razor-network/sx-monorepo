@@ -30,6 +30,9 @@ export type Propose = {
   strategies: StrategyConfig[];
   executionStrategy: AddressConfig;
   metadataUri: string;
+  proposal?: number;
+  root: string;
+  snapshotBlock: number;
 };
 
 export type UpdateProposal = {

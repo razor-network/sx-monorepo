@@ -222,6 +222,8 @@ export type Draft = {
   executionStrategy: SelectedStrategy | null;
   execution: Transaction[];
   updatedAt: number;
+  root: string;
+  snapshotBlock: number;
 };
 
 export type Metadata = {
