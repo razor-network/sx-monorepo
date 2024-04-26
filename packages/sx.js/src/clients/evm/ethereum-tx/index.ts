@@ -482,8 +482,9 @@ export class EthereumTx {
   ) {
     const voterAddress = envelope.signatureData?.address || (await signer.getAddress());
 
+    // * Here fetching the only strategy which is associated with proposal
     const customUserVotingStrategies: StrategyConfig[] = [
-      envelope.data.strategies[envelope.data.proposal]
+      envelope.data.strategies[envelope.data.proposal - 1]
     ] as StrategyConfig[];
 
     //TODO: Find a user strategy that needs to be send to the contract

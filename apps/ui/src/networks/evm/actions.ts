@@ -590,9 +590,13 @@ export function createActions(
       strategiesParams: any[],
       strategiesMetadata: StrategyParsedMetadata[],
       voterAddress: string,
-      snapshotInfo: SnapshotInfo
+      snapshotInfo: SnapshotInfo,
+      proposalId: number
     ): Promise<VotingPower[]> => {
       if (snapshotInfo.at === null) throw new Error('EVM requires block number to be defined');
+
+      // * Filtering strategiesAddresses to only call the strategies that is associated with that proposal
+      strategiesAddresses = [strategiesAddresses[proposalId - 1]];
 
       return Promise.all(
         strategiesAddresses.map(async (address, i) => {
@@ -609,7 +613,8 @@ export function createActions(
             strategyMetadata,
             snapshotInfo.at!,
             strategiesParams[i],
-            provider
+            provider,
+            proposalId
           );
 
           const token = ['comp', 'ozVotes'].includes(strategy.type)

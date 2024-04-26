@@ -91,7 +91,8 @@ export type ReadOnlyNetworkActions = {
     strategiesParams: any[],
     strategiesMetadata: StrategyParsedMetadata[],
     voterAddress: string,
-    snapshotInfo: SnapshotInfo
+    snapshotInfo: SnapshotInfo,
+    proposalId?: number
   ): Promise<VotingPower[]>;
   propose(
     web3: Web3Provider,

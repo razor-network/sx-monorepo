@@ -61,7 +61,8 @@ async function getVotingPower() {
       proposal.value.strategies_params,
       proposal.value.space.strategies_parsed_metadata,
       web3.value.account,
-      { at: proposal.value.snapshot, chainId: proposal.value.space.snapshot_chain_id }
+      { at: proposal.value.snapshot, chainId: proposal.value.space.snapshot_chain_id },
+      proposal.value.proposal_id
     );
     votingPowerStatus.value = 'success';
   } catch (e: unknown) {

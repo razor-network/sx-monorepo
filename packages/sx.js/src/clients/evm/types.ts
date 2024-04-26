@@ -81,7 +81,8 @@ export type Strategy = {
     metadata: Record<string, any> | null,
     block: number,
     params: string,
-    provider: Provider
+    provider: Provider,
+    proposalId: number
   ): Promise<bigint>;
 };
 

@@ -1,8 +1,10 @@
 import { AbiCoder } from '@ethersproject/abi';
+import type { Provider } from '@ethersproject/providers';
+
 import type { Strategy } from '../../clients/evm/types';
 import type { StrategyConfig } from '../../types';
 
-import getMerkleVotingParams from '../../utils/merkleVoting';
+import { getMerkleVotingParams, getScoreFromProposalId } from '../../utils/merkleVoting';
 
 export default function createMerkleVotingStrategy(): Strategy {
   return {
@@ -41,9 +43,18 @@ export default function createMerkleVotingStrategy(): Strategy {
         return 'error';
       }
     },
-    async getVotingPower(): Promise<bigint> {
+    async getVotingPower(
+      strategyAddress: string,
+      voterAddress: string,
+      metadata: Record<string, any> | null,
+      block: number,
+      params: string,
+      provider: Provider,
+      proposalId: number
+    ): Promise<bigint> {
       console.log('Calling get voting power from my strategy');
-      const score = BigInt('123932771293099211787713');
+      // const score = BigInt('123932771293099211787713');
+      const score = await getScoreFromProposalId(strategyAddress, voterAddress, proposalId);
 
       return score;
     }
