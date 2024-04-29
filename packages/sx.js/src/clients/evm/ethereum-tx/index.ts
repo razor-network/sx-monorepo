@@ -410,8 +410,6 @@ export class EthereumTx {
 
     console.log({ userStrategies });
     const abiCoder = new AbiCoder();
-    // TODO: Fetch proposalId from Space contract using nextProposalId
-    // const proposalId = 2;
 
     const encodedData = abiCoder.encode(
       ['bytes32', 'uint256', 'uint256'],
