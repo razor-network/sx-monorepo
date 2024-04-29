@@ -249,7 +249,7 @@ export function createConstants(networkId: NetworkID) {
       address: config.Strategies.MerkleVoting,
       name: 'New Merkle Voting',
       about:
-        'A strategy that gives one voting power to anyone. It should only be used for testing purposes and not in production.',
+        'Calculate scores based on a Merkle tree of votes. The tree is generated off-chain and the root is stored on-chain.',
       icon: IHBeaker,
       generateMetadata: async (params: Record<string, any>) => ({
         name: 'MerkleVoting',
@@ -465,45 +465,45 @@ export function createConstants(networkId: NetworkID) {
           }
         }
       }
-    },
-    {
-      address: config.Strategies.MerkleVoting,
-      name: 'Merkle Voting',
-      about:
-        'Calculate scores based on a Merkle tree of votes. The tree is generated off-chain and the root is stored on-chain.',
-      icon: IHCode,
-      // generateSummary: (params: Record<string, any>) =>
-      //   `(${shorten(params.contractAddress)}, ${params.decimals})`,
-      generateParams: (params: Record<string, any>) => [params.contractAddress],
-      generateMetadata: async (params: Record<string, any>) => ({
-        name: 'Merkle Voting',
-        properties: {
-          symbol: params.symbol,
-          decimals: 0
-        }
-      }),
-      parseParams: async (params: string, metadata: StrategyParsedMetadata | null) => {
-        if (!metadata) throw new Error('Missing metadata');
-
-        return {
-          symbol: metadata.symbol
-        };
-      },
-      paramsDefinition: {
-        type: 'object',
-        title: 'Params',
-        additionalProperties: false,
-        required: [],
-        properties: {
-          symbol: {
-            type: 'string',
-            maxLength: MAX_SYMBOL_LENGTH,
-            title: 'Symbol',
-            examples: ['e.g. VP']
-          }
-        }
-      }
     }
+    // {
+    //   address: config.Strategies.MerkleVoting,
+    //   name: 'Merkle Voting',
+    //   about:
+    //     'Calculate scores based on a Merkle tree of votes. The tree is generated off-chain and the root is stored on-chain.',
+    //   icon: IHCode,
+    //   // generateSummary: (params: Record<string, any>) =>
+    //   //   `(${shorten(params.contractAddress)}, ${params.decimals})`,
+    //   generateParams: (params: Record<string, any>) => [params.contractAddress],
+    //   generateMetadata: async (params: Record<string, any>) => ({
+    //     name: 'Merkle Voting',
+    //     properties: {
+    //       symbol: params.symbol,
+    //       decimals: 0
+    //     }
+    //   }),
+    //   parseParams: async (params: string, metadata: StrategyParsedMetadata | null) => {
+    //     if (!metadata) throw new Error('Missing metadata');
+
+    //     return {
+    //       symbol: metadata.symbol
+    //     };
+    //   },
+    //   paramsDefinition: {
+    //     type: 'object',
+    //     title: 'Params',
+    //     additionalProperties: false,
+    //     required: [],
+    //     properties: {
+    //       symbol: {
+    //         type: 'string',
+    //         maxLength: MAX_SYMBOL_LENGTH,
+    //         title: 'Symbol',
+    //         examples: ['e.g. VP']
+    //       }
+    //     }
+    //   }
+    // }
   ];
 
   const EDITOR_PROPOSAL_VALIDATION_VOTING_STRATEGIES = EDITOR_VOTING_STRATEGIES;
