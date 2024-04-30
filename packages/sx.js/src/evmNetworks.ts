@@ -39,6 +39,7 @@ function createStandardConfig(
     ExecutionStrategies: {
       SimpleQuorumAvatar: '0x4d719A8131eC19B06b11b3049076d09F45527cC4',
       SimpleQuorumTimelock: '0x13DE21a35fEd1C16E4c09FD1888186cb357A0ab2',
+      SimpleQuorumVanilla: '0x6560B2eEEa07642F2CA3ebD100C07A1c1f66F2Ea',
       Axiom: null,
       Isokratia: null,
       ...additionalExecutionStrategies
@@ -79,6 +80,7 @@ function createEvmConfig(networkId: keyof typeof evmNetworks): EvmNetworkConfig 
   const executionStrategiesImplementations = {
     SimpleQuorumAvatar: network.ExecutionStrategies.SimpleQuorumAvatar,
     SimpleQuorumTimelock: network.ExecutionStrategies.SimpleQuorumTimelock,
+    SimpleQuorumVanilla: network.ExecutionStrategies.SimpleQuorumVanilla,
     ...(network.ExecutionStrategies.Axiom ? { Axiom: network.ExecutionStrategies.Axiom } : {}),
     ...(network.ExecutionStrategies.Isokratia
       ? { Isokratia: network.ExecutionStrategies.Isokratia }
@@ -123,6 +125,7 @@ export const evmNetworks = {
     ExecutionStrategies: {
       SimpleQuorumAvatar: '0x38afdA9bD192300C128C22278D71D492dB1Ac238',
       SimpleQuorumTimelock: '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4',
+      SimpleQuorumVanilla: '0x6560B2eEEa07642F2CA3ebD100C07A1c1f66F2Ea',
       Axiom: null,
       Isokratia: null
     }
@@ -152,6 +155,7 @@ export const evmNetworks = {
     ExecutionStrategies: {
       SimpleQuorumAvatar: '0x177F163F8f789F0d9C5c7993728ADB106a7b12d4',
       SimpleQuorumTimelock: '0xdb86512e7E3a2d0B93b74b8FE3fFE8AD780791BE',
+      SimpleQuorumVanilla: '0x6560B2eEEa07642F2CA3ebD100C07A1c1f66F2Ea',
       Axiom: null,
       Isokratia: null
     }

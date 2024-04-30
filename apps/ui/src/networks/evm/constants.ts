@@ -43,7 +43,8 @@ export function createConstants(networkId: NetworkID) {
     SimpleQuorumAvatar: true,
     SimpleQuorumTimelock: true,
     Axiom: true,
-    Isokratia: true
+    Isokratia: true,
+    SimpleQuorumVanilla: true
   };
 
   const RELAYER_AUTHENTICATORS = {
@@ -72,7 +73,8 @@ export function createConstants(networkId: NetworkID) {
     SimpleQuorumAvatar: 'Safe module (Zodiac)',
     SimpleQuorumTimelock: 'Timelock',
     Axiom: 'Axiom',
-    Isokratia: 'Isokratia'
+    Isokratia: 'Isokratia',
+    VanillaExecutionStrategy: 'Vanilla execution strategy'
   };
 
   const EDITOR_AUTHENTICATORS = [
@@ -557,6 +559,50 @@ export function createConstants(networkId: NetworkID) {
             format: 'address',
             title: 'Avatar address',
             examples: ['0x0000…']
+          }
+        }
+      }
+    },
+    {
+      address: '',
+      type: 'SimpleQuorumVanilla',
+      name: EXECUTORS.VanillaExecutionStrategy,
+      about:
+        'This is a vanilla execution strategy that allows proposals to execute transactions from a specified target contract.',
+      icon: IHClock,
+      generateSummary: (params: Record<string, any>) => `(${params.quorum}, ${params.owner})`,
+      deploy: async (
+        client: clients.EvmEthereumTx,
+        signer: Signer,
+        controller: string,
+        spaceAddress: string,
+        params: Record<string, any>
+      ): Promise<{ address: string; txId: string }> => {
+        console.log({ quorum: params.quorum });
+        return client.deployVanillaExecution({
+          signer,
+          params: {
+            owner: params.owner,
+            quorum: BigInt(params.quorum)
+          }
+        });
+      },
+      paramsDefinition: {
+        type: 'object',
+        title: 'Params',
+        additionalProperties: false,
+        required: ['owner', 'quorum'],
+        properties: {
+          owner: {
+            type: 'string',
+            format: 'address',
+            title: 'Owner address',
+            examples: ['0x0000…']
+          },
+          quorum: {
+            type: 'integer',
+            title: 'Quorum',
+            examples: ['1']
           }
         }
       }

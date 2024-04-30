@@ -11,6 +11,7 @@ import AvatarExecutionStrategyAbi from './abis/AvatarExecutionStrategy.json';
 import TimelockExecutionStrategyAbi from './abis/TimelockExecutionStrategy.json';
 import AxiomExecutionStrategyAbi from './abis/AxiomExecutionStrategy.json';
 import IsokratiaExecutionStrategyAbi from './abis/IsokratiaExecutionStrategy.json';
+import VanillaExecutionStrategy from './abis/VanillaExecutionStrategy.json';
 import type { Signer } from '@ethersproject/abstract-signer';
 import type {
   Propose,
@@ -49,6 +50,11 @@ type TimelockExecutionStrategyParams = {
   vetoGuardian: string;
   spaces: string[];
   timelockDelay: bigint;
+  quorum: bigint;
+};
+
+type VanillaExecutionStrategyParams = {
+  owner: string;
   quorum: bigint;
 };
 
@@ -111,7 +117,7 @@ export class EthereumTx {
     saltNonce = saltNonce || `0x${randomBytes(32).toString('hex')}`;
 
     const implementationAddress =
-      this.networkConfig.executionStrategiesImplementations['SimpleQuorumAvatar'];
+      this.networkConfig.executionStrategiesImplementations['SimpleQuorumVanilla'];
 
     if (!implementationAddress) {
       throw new Error('Missing SimpleQuorumAvatar implementation address');
@@ -130,6 +136,58 @@ export class EthereumTx {
       [controller, target, spaces, quorum]
     );
     const functionData = avatarExecutionStrategyInterface.encodeFunctionData('setUp', [initParams]);
+
+    const sender = await signer.getAddress();
+    const salt = await this.getSalt({
+      sender,
+      saltNonce
+    });
+    const address = await proxyFactoryContract.predictProxyAddress(implementationAddress, salt);
+    const response = await proxyFactoryContract.deployProxy(
+      implementationAddress,
+      functionData,
+      saltNonce
+    );
+
+    return { address, txId: response.hash };
+  }
+
+  async deployVanillaExecution({
+    signer,
+    params: { owner, quorum },
+    saltNonce
+  }: {
+    signer: Signer;
+    params: VanillaExecutionStrategyParams;
+    saltNonce?: string;
+  }): Promise<{ txId: string; address: string }> {
+    saltNonce = saltNonce || `0x${randomBytes(32).toString('hex')}`;
+
+    console.log({ nc: this.networkConfig.executionStrategiesImplementations });
+
+    console.log('Deploying Vanilla Execution Strategy');
+
+    const implementationAddress =
+      this.networkConfig.executionStrategiesImplementations['SimpleQuorumVanilla'];
+
+    console.log({ implementationAddress });
+
+    if (!implementationAddress) {
+      throw new Error('Missing SimpleQuorumVanilla implementation address');
+    }
+
+    const abiCoder = new AbiCoder();
+    const timelockExecutionStrategyInterface = new Interface(VanillaExecutionStrategy);
+    const proxyFactoryContract = new Contract(
+      this.networkConfig.proxyFactory,
+      ProxyFactoryAbi,
+      signer
+    );
+
+    const initParams = abiCoder.encode(['address', 'uint256'], [owner, quorum]);
+    const functionData = timelockExecutionStrategyInterface.encodeFunctionData('setUp', [
+      initParams
+    ]);
 
     const sender = await signer.getAddress();
     const salt = await this.getSalt({
@@ -409,6 +467,8 @@ export class EthereumTx {
     console.log({ proposalId });
 
     console.log({ userStrategies });
+
+    console.log({ envelopeExecutionStrategy: envelope.data.executionStrategy });
     const abiCoder = new AbiCoder();
 
     const encodedData = abiCoder.encode(
@@ -416,11 +476,22 @@ export class EthereumTx {
       [root, BigInt(snapshotBlock), BigInt(proposalId)]
     );
 
+    //! NOTE: This is a temporary solution to get the execution strategy
+    const executionStrategy: AddressConfig = {
+      addr: '0xAdb4239C8eC70406cF9fcE29786764Cd641A83dB',
+      params: abiCoder.encode(
+        ['address', 'uint256'],
+        ['0x70A0a396D3D73387846042B8B02508cE4c947dc4', '500000000000000000000000']
+      )
+    };
+
+    console.log({ executionStrategy });
+
     const spaceInterface = new Interface(SpaceAbi);
     const functionData = spaceInterface.encodeFunctionData('propose', [
       proposerAddress,
       envelope.data.metadataUri,
-      envelope.data.executionStrategy,
+      executionStrategy,
       encodedData
     ]);
 
