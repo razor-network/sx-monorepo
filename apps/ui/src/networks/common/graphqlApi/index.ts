@@ -33,8 +33,8 @@ type ApiOptions = {
 function getProposalState(proposal: ApiProposal, current: number): ProposalState {
   if (proposal.executed) return 'executed';
   if (proposal.max_end <= current) {
-    if (proposal.scores_total < proposal.quorum) return 'rejected';
-    return proposal.scores_1 > proposal.scores_2 ? 'passed' : 'rejected';
+    if (BigInt(proposal.scores_total) < BigInt(proposal.quorum)) return 'rejected';
+    return BigInt(proposal.scores_1) > BigInt(proposal.scores_2) ? 'passed' : 'rejected';
   }
   if (proposal.start > current) return 'pending';
 
