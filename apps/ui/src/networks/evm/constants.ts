@@ -249,22 +249,24 @@ export function createConstants(networkId: NetworkID) {
     },
     {
       address: config.Strategies.MerkleVoting,
-      name: 'New Merkle Voting',
+      name: 'Custom Merkle Voting',
       about:
         'Calculate scores based on a Merkle tree of votes. The tree is generated off-chain and the root is stored on-chain.',
       icon: IHBeaker,
       generateMetadata: async (params: Record<string, any>) => ({
         name: 'MerkleVoting',
         properties: {
-          symbol: params.proposalIndex,
-          decimals: 0
+          symbol: params.symbol,
+          decimals: 18
         }
       }),
       parseParams: async (params: string, metadata: StrategyParsedMetadata | null) => {
         if (!metadata) throw new Error('Missing metadata');
 
         return {
-          proposalIndex: metadata.symbol
+          // proposalIndex: metadata.symbol,
+          decimals: 18,
+          symbol: metadata.symbol
         };
       },
       paramsDefinition: {
@@ -274,7 +276,8 @@ export function createConstants(networkId: NetworkID) {
         required: [],
         properties: {
           symbol: {
-            type: 'integer',
+            type: 'string',
+            maxLength: MAX_SYMBOL_LENGTH,
             title: 'Symbol',
             examples: ['e.g. VP']
           }
