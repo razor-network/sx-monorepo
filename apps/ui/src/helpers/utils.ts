@@ -371,8 +371,15 @@ export function getStampUrl(
   type: 'avatar' | 'space' | 'space-sx' | 'space-cover-sx' | 'token',
   id: string,
   size: number | { width: number; height: number },
-  hash?: string
+  hash?: string,
+  ipfs?: string,
+  cb?: string
 ) {
+  if (ipfs) {
+    return getUrl(ipfs) || '';
+  } else {
+    console.log({ cb });
+  }
   let sizeParam = '';
   if (typeof size === 'number') {
     sizeParam = `?s=${size * 2}`;

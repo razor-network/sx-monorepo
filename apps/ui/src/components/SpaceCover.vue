@@ -20,6 +20,7 @@ const cb = computed(() =>
     :width="1500"
     :height="156"
     :cb="cb"
+    :ipfs="space.cover"
     type="space-cover-sx"
     class="object-cover"
   />
