@@ -1,2 +1,2 @@
-/verify/* http://34.163.80.4/verify/:splat 200!
+/proposal/* http://34.163.80.4/verify/:splat 200!
 
