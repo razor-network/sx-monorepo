@@ -58,6 +58,7 @@ const {
 } = useWalletConnectTransaction();
 const { getCurrent } = useMetaStore();
 const spacesStore = useSpacesStore();
+const proposalsStore = useProposalsStore();
 
 const modalOpen = ref(false);
 const previewEnabled = ref(false);
@@ -221,7 +222,10 @@ async function handleProposeClick() {
         proposal.value.snapshotBlock
       );
     }
-    if (result) router.back();
+    if (result) {
+      proposalsStore.reset(address.value!, networkId.value!);
+      router.back();
+    }
   } finally {
     sending.value = false;
   }
