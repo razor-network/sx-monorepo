@@ -75,7 +75,12 @@ watch(route, to => {
             />
           </form>
         </div>
-        <router-link v-else :to="{ path: '/' }" class="flex items-center" style="font-size: 24px">
+        <router-link
+          v-else
+          :to="{ path: '/sep:0x08E07EE4F7ccdE0a93a0deD02aBcce2FE4A07659' }"
+          class="flex items-center"
+          style="font-size: 24px"
+        >
           snapshot x
         </router-link>
       </div>

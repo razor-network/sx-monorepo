@@ -26,7 +26,12 @@ import App from '@/views/App.vue';
 const { mixpanel } = useMixpanel();
 
 const routes: any[] = [
-  { path: '/', name: 'landing', component: Landing },
+  {
+    path: '/',
+    name: 'landing',
+    redirect: '/sep:0x08E07EE4F7ccdE0a93a0deD02aBcce2FE4A07659',
+    component: Landing
+  },
   {
     path: '/:id',
     name: 'space',
