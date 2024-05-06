@@ -74,7 +74,8 @@ export function createConstants(networkId: NetworkID) {
     SimpleQuorumTimelock: 'Timelock',
     Axiom: 'Axiom',
     Isokratia: 'Isokratia',
-    VanillaExecutionStrategy: 'Vanilla execution strategy'
+    VanillaExecutionStrategy: 'Vanilla execution strategy',
+    SimpleQuorumVanilla: 'Simple quorum'
   };
 
   const EDITOR_AUTHENTICATORS = [

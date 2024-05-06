@@ -29,7 +29,7 @@ const routes: any[] = [
   {
     path: '/',
     name: 'landing',
-    redirect: '/sep:0x08E07EE4F7ccdE0a93a0deD02aBcce2FE4A07659',
+    redirect: '/sep:0x22fcfBE907139a3f970ad8B7A3FC4D0c1b698a98',
     component: Landing
   },
   {

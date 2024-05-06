@@ -77,7 +77,7 @@ watch(route, to => {
         </div>
         <router-link
           v-else
-          :to="{ path: '/sep:0x08E07EE4F7ccdE0a93a0deD02aBcce2FE4A07659' }"
+          :to="{ path: '/sep:0x22fcfBE907139a3f970ad8B7A3FC4D0c1b698a98' }"
           class="flex items-center"
           style="font-size: 24px"
         >
