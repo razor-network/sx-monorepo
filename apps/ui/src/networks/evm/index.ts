@@ -74,6 +74,13 @@ export const METADATA: Record<string, Metadata> = {
     apiUrl: 'https://thegraph.goerli.zkevm.consensys.net/subgraphs/name/snapshot-labs/sx-subgraph',
     avatar: 'ipfs://bafkreibn4mjs54bnmvkrkiaiwp47gvcz6bervg2kr5ubknytfyz6l5wbs4',
     blockTime: 13.52926
+  },
+  'skale-testnet': {
+    name: 'Skale Testnet',
+    chainId: 1444673419,
+    apiUrl: 'http://localhost:8000/subgraphs/name/snapshot-labs/sx-subgraph',
+    avatar: 'ipfs://bafkreid7ndxh6y2ljw2jhbisodiyrhcy2udvnwqgon5wgells3kh4si5z4',
+    blockTime: 3
   }
 };
 
@@ -124,7 +131,9 @@ export function createEvmNetwork(networkId: NetworkID): Network {
     chainId,
     baseChainId: chainId,
     currentChainId: currentChainId ?? chainId,
-    supportsSimulation: ['eth', 'gor', 'sep', 'oeth', 'matic', 'arb1'].includes(networkId),
+    supportsSimulation: ['eth', 'gor', 'sep', 'oeth', 'matic', 'arb1', 'skale-testnet'].includes(
+      networkId
+    ),
     managerConnectors: EVM_CONNECTORS,
     actions: createActions(provider, helpers, chainId),
     api,

@@ -159,6 +159,35 @@ export const evmNetworks = {
       Axiom: null,
       Isokratia: null
     }
+  },
+  'skale-testnet': {
+    Meta: {
+      eip712ChainId: 11155111,
+      proxyFactory: '0x542922aF76e8b55076a54b15fD972156f5B143B0',
+      masterSpace: '0xB1870f2Dc79862c5a06090344bfbBCA07483dAEe'
+    },
+    Authenticators: {
+      EthSig: '0x38b4B21b498a0983aE8028442FEB48BB91A9B75e',
+      EthTx: '0xA927DEcf7E163b779592711fF866a58d1a5Cc270'
+    },
+    Strategies: {
+      Vanilla: '0x63E60ae42844dAf91C9Bcf8057731AA97012eD0a',
+      Comp: '0x5Df7743a11136E11010c3F6976C28a8aF5D681a7',
+      OZVotes: '0x9b528301AE02C4141eB9e870e36C14bE2E0Ec48F',
+      Whitelist: '0x4ea6CD1c54e67f650aE9bb8f1C126a2a9226510A',
+      MerkleVoting: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29'
+    },
+    ProposalValidations: {
+      VotingPower: '0x975201328596612a8F46263D4216355B6D94DFF7',
+      WhitelistAndActiveProposalsLimiter: '0xc72dC228cB23871E24C12439D04a8792a888333d'
+    },
+    ExecutionStrategies: {
+      SimpleQuorumAvatar: '0x38afdA9bD192300C128C22278D71D492dB1Ac238',
+      SimpleQuorumTimelock: '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4',
+      SimpleQuorumVanilla: '0x6560B2eEEa07642F2CA3ebD100C07A1c1f66F2Ea',
+      Axiom: null,
+      Isokratia: null
+    }
   }
 } as const;
 
@@ -169,3 +198,4 @@ export const evmOptimism = createEvmConfig('oeth');
 export const evmPolygon = createEvmConfig('matic');
 export const evmArbitrum = createEvmConfig('arb1');
 export const evmLineaGoerli = createEvmConfig('linea-testnet');
+export const evmSkaleTestnet = createEvmConfig('skale-testnet');
