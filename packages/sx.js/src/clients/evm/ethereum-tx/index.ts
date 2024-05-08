@@ -478,7 +478,7 @@ export class EthereumTx {
 
     //! NOTE: This is a temporary solution to get the execution strategy
     const executionStrategy: AddressConfig = {
-      addr: '0xCc09537aFb2eC8888a1AaFB990A2A7e371213fDf',
+      addr: '0xDC093ca27424f4E09802598397ED74eF8f25DB64',
       params: abiCoder.encode(
         ['address', 'uint256'],
         ['0x70A0a396D3D73387846042B8B02508cE4c947dc4', '500000000000000000000000']
