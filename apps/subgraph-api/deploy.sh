@@ -25,12 +25,12 @@ done
 >&2 echo "Graph node is Up is up - executing command"
 
 echo "Installing dependencies"
-npm i
+yarn 
 
 echo "Building app"
-npm run codegen
-npm run build
+yarn run codegen
+yarn run build
 
 echo "Pushing app to local graph node"
-npm run create-local
-npm run deploy-local
+yarn run create-local
+yarn run deploy-local
