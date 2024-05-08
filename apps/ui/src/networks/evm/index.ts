@@ -80,7 +80,7 @@ export const METADATA: Record<string, Metadata> = {
     chainId: 1444673419,
     apiUrl: 'http://localhost:8000/subgraphs/name/snapshot-labs/sx-subgraph',
     avatar: 'ipfs://bafkreid7ndxh6y2ljw2jhbisodiyrhcy2udvnwqgon5wgells3kh4si5z4',
-    blockTime: 3
+    blockTime: 10
   }
 };
 

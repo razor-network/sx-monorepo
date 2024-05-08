@@ -162,7 +162,7 @@ export const evmNetworks = {
   },
   'skale-testnet': {
     Meta: {
-      eip712ChainId: 11155111,
+      eip712ChainId: 1444673419,
       proxyFactory: '0x542922aF76e8b55076a54b15fD972156f5B143B0',
       masterSpace: '0xB1870f2Dc79862c5a06090344bfbBCA07483dAEe'
     },
