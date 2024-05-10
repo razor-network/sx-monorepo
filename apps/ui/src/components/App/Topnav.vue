@@ -77,7 +77,7 @@ watch(route, to => {
         </div>
         <router-link
           v-else
-          :to="{ path: '/skale-testnet:0xcC9D835809261163a896357AdCf65C8F43c34e54' }"
+          :to="{ path: '/skale-testnet:0xbA0012E25e9D2f4b88a59e20086789d6458f6DF0' }"
           class="flex items-center"
           style="font-size: 24px"
         >

@@ -476,13 +476,12 @@ export class EthereumTx {
       [root, BigInt(snapshotBlock), BigInt(proposalId)]
     );
 
+    const signerAddress = await signer.getAddress();
+
     //! NOTE: This is a temporary solution to get the execution strategy
     const executionStrategy: AddressConfig = {
-      addr: '0xDC093ca27424f4E09802598397ED74eF8f25DB64',
-      params: abiCoder.encode(
-        ['address', 'uint256'],
-        ['0x70A0a396D3D73387846042B8B02508cE4c947dc4', '500000000000000000000000']
-      )
+      addr: '0x746537F42942c0bAF2057A0eF8A394123Bce40a3',
+      params: abiCoder.encode(['address', 'uint256'], [signerAddress, '500000000000000000000000'])
     };
 
     console.log({ executionStrategy });

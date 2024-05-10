@@ -153,7 +153,7 @@ export function createActions(
           authenticators: params.authenticators.map(config => config.address),
           votingStrategies: Array.from({ length: MAX_MERKLE_VOTING_STRATEGIES }, (_, i) => {
             return {
-              addr: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29',
+              addr: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95',
               params: abiCoder.encode(['uint256'], [BigInt(i + 1)])
             };
           }),
