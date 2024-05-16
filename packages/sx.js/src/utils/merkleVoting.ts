@@ -4,7 +4,7 @@ import { Contract } from '@ethersproject/contracts';
 import MerkleVotingABI from '../abis/MerkleVoting.json';
 
 const MERKLE_VOTING_RPC_PROVIDER = 'https://testnet.skalenodes.com/v1/juicy-low-small-testnet';
-const MERKLE_VOTING_API = 'https://35.185.190.187';
+const MERKLE_VOTING_API = 'https://34.170.76.2:8003';
 
 export async function getMerkleVotingParams(
   strategyAddress: string,
