@@ -17,10 +17,24 @@ const goerliNetwork = createEvmNetwork('gor');
 const sepoliaNetwork = createEvmNetwork('sep');
 const lineaTestnetNetwork = createEvmNetwork('linea-testnet');
 const skaleTestnetNetwork = createEvmNetwork('skale-testnet');
+const skaleMainnetNetwork = createEvmNetwork('skale-mainnet');
 
 export const enabledNetworks: NetworkID[] = import.meta.env.VITE_ENABLED_NETWORKS
   ? (import.meta.env.VITE_ENABLED_NETWORKS.split(',') as NetworkID[])
-  : ['s', 's-tn', 'eth', 'matic', 'arb1', 'oeth', 'gor', 'sep', 'skale-testnet', 'sn', 'sn-sep'];
+  : [
+      's',
+      's-tn',
+      'eth',
+      'matic',
+      'arb1',
+      'oeth',
+      'gor',
+      'sep',
+      'skale-testnet',
+      'skale-mainnet',
+      'sn',
+      'sn-sep'
+    ];
 
 export const evmNetworks: NetworkID[] = [
   'eth',
@@ -30,7 +44,8 @@ export const evmNetworks: NetworkID[] = [
   'gor',
   'sep',
   'linea-testnet',
-  'skale-testnet'
+  'skale-testnet',
+  'skale-mainnet'
 ];
 export const offchainNetworks: NetworkID[] = ['s', 's-tn'];
 
@@ -50,6 +65,7 @@ export const getNetwork = (id: NetworkID) => {
   if (id === 'sn-tn') return starknetTestnetNetwork;
   if (id === 'sn-sep') return starknetSepoliaNetwork;
   if (id === 'skale-testnet') return skaleTestnetNetwork;
+  if (id === 'skale-mainnet') return skaleMainnetNetwork;
 
   throw new Error(`Unknown network ${id}`);
 };

@@ -16,7 +16,7 @@ import IHUserCircle from '~icons/heroicons-outline/user-circle';
 import IHLightningBolt from '~icons/heroicons-outline/lightning-bolt';
 import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
-export const MAX_MERKLE_VOTING_STRATEGIES = 10;
+export const MAX_MERKLE_VOTING_STRATEGIES = 10; // !NOTE: Update this for mainnet
 
 export function createConstants(networkId: NetworkID) {
   const config = evmNetworks[networkId];

@@ -9,7 +9,8 @@ const UNISWAP_CHAINS_BY_NETWORK = {
   '42220': 'celo',
   '11155111': 'sepolia',
   '5': 'goerli',
-  '1444673419': 'skale-testnet'
+  '1444673419': 'skale-testnet',
+  '278611351': 'skale-mainnet'
 };
 
 export function getSwapLink(strategy: string, address: string, chainId?: number) {

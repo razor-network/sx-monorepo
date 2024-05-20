@@ -9,7 +9,7 @@ export function getProvider(networkId: number): StaticJsonRpcProvider {
 
   if (!provider) {
     provider = new StaticJsonRpcProvider(
-      { url: 'https://testnet.skalenodes.com/v1/juicy-low-small-testnet', timeout: 25000 },
+      { url: 'https://mainnet.skalenodes.com/v1/turbulent-unique-scheat', timeout: 25000 },
       networkId
     );
     providers[networkId] = provider;
