@@ -7,8 +7,8 @@ dataSources:
     network: mainnet
     source:
       abi: ProxyFactory
-      address: '0x96f98916be07BCdB2556349b13D5F404B78E13D7'
-      startBlock: 1403270
+      address: '0x5ED79e82A59245488dfDC75B64AbC640348cbf4f'
+      startBlock: 5310200
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

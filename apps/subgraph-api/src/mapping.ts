@@ -50,11 +50,11 @@ import {
   toChecksumAddress,
 } from './helpers'
 
-const MASTER_SPACE = Address.fromString('0xae55A5603ba260eb38a1567774395f3e1871707B')
-const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0x84CfB838FA4F868560f03eA633b1bDC6e958bf63')
+const MASTER_SPACE = Address.fromString('0xfEcEdAb2203C188B6C3902d29D28387B931591a2')
+const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0xc7c1b38988a0C7d2f7c7318216951a92A4cc4bC5')
 const MASTER_AXIOM = Address.fromString('0xaC6dbd42Ed254E9407fe0D2798784d0110979DC2')
 const MASTER_SIMPLE_QUORUM_TIMELOCK = Address.fromString(
-  '0x44f9E596315CFd27FDbB3041251fFD4D97684f25'
+  '0xeD352980Dc57f18FBC7afa9A78BCbD95c2f0af58'
 )
 
 const CHAIN_IDS = new Map<string, i32>()
