@@ -164,7 +164,7 @@ export function createActions(
           }),
           proposalValidationStrategy: {
             addr: params.validationStrategy.address,
-            params: abiCoder.encode(['uint256', 'uint256'], [BigInt(1), BigInt(10)]) // !NOTE: check here. maxActiveProposal, cooldown
+            params: abiCoder.encode(['uint256', 'uint256'], [BigInt(10), BigInt(100)])
           },
           metadataUri: `ipfs://${pinned.cid}`,
           proposalValidationStrategyMetadataUri,
