@@ -86,7 +86,7 @@ export const METADATA: Record<string, Metadata> = {
     name: 'Razor Skale Chain',
     chainId: 278611351,
     apiUrl: 'https://sx-indexer.razorscan.io/subgraphs/name/snapshot-labs/sx-subgraph',
-    avatar: 'ipfs://bafkreid7ndxh6y2ljw2jhbisodiyrhcy2udvnwqgon5wgells3kh4si5z4',
+    avatar: 'https://ipfs.io/ipfs/QmRXoxMnz9ViWzQ7Ewg7dA8XtQoxp8gQ4cWjqj1Vk2ue2p/razor.png',
     blockTime: 10.7 // !NOTE: block time needs to precise else voting duration will be inaccurate
   }
 };
