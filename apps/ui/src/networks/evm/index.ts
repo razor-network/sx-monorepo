@@ -85,7 +85,7 @@ export const METADATA: Record<string, Metadata> = {
   'skale-mainnet': {
     name: 'Razor Skale Chain',
     chainId: 278611351,
-    apiUrl: 'https://34.170.76.2/subgraphs/name/snapshot-labs/sx-subgraph', // !NOTE: update to mainnet subgraph
+    apiUrl: 'https://sx-indexer.razorscan.io/subgraphs/name/snapshot-labs/sx-subgraph',
     avatar: 'ipfs://bafkreid7ndxh6y2ljw2jhbisodiyrhcy2udvnwqgon5wgells3kh4si5z4',
     blockTime: 10.7 // !NOTE: block time needs to precise else voting duration will be inaccurate
   }
