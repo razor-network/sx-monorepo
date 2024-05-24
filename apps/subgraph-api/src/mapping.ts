@@ -50,11 +50,11 @@ import {
   toChecksumAddress,
 } from './helpers'
 
-const MASTER_SPACE = Address.fromString('0xC3031A7d3326E47D49BfF9D374d74f364B29CE4D')
-const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0xecE4f6b01a2d7FF5A9765cA44162D453fC455e42')
+const MASTER_SPACE = Address.fromString('0xB1870f2Dc79862c5a06090344bfbBCA07483dAEe')
+const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0x6560B2eEEa07642F2CA3ebD100C07A1c1f66F2Ea')
 const MASTER_AXIOM = Address.fromString('0xaC6dbd42Ed254E9407fe0D2798784d0110979DC2')
 const MASTER_SIMPLE_QUORUM_TIMELOCK = Address.fromString(
-  '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4'
+  '0x6791408d253CF326BcA01a41ab909254a64F2cDa'
 )
 
 const CHAIN_IDS = new Map<string, i32>()
@@ -75,8 +75,8 @@ export function handleProxyDeployed(event: ProxyDeployed): void {
     let executionStrategyContract = AvatarExecutionStrategy.bind(event.params.proxy)
     let typeResult = executionStrategyContract.try_getStrategyType()
     let quorumResult = executionStrategyContract.try_quorum()
-    let targetAddress = executionStrategyContract.try_target()
-    if (typeResult.reverted || quorumResult.reverted || targetAddress.reverted) return
+    // let targetAddress = executionStrategyContract.try_target()
+    if (typeResult.reverted || quorumResult.reverted) return
 
     let executionStrategy = new ExecutionStrategy(
       toChecksumAddress(event.params.proxy.toHexString())
@@ -84,7 +84,7 @@ export function handleProxyDeployed(event: ProxyDeployed): void {
     executionStrategy.type = typeResult.value
     executionStrategy.quorum = new BigDecimal(quorumResult.value)
     if (CHAIN_IDS.has(network)) executionStrategy.treasury_chain = CHAIN_IDS.get(network)
-    executionStrategy.treasury = toChecksumAddress(targetAddress.value.toHexString())
+    executionStrategy.treasury = toChecksumAddress(event.transaction.from.toHexString())
     executionStrategy.timelock_delay = new BigInt(0)
     executionStrategy.save()
   } else if (event.params.implementation.equals(MASTER_AXIOM)) {

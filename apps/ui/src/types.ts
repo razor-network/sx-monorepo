@@ -131,6 +131,7 @@ export type Proposal = {
   network: NetworkID;
   type: VoteType;
   quorum: number;
+  quorum_type?: 'default' | 'rejection';
   space: {
     id: string;
     name: string;
@@ -189,6 +190,14 @@ export type User = {
   proposal_count: number;
   vote_count: number;
   created: number;
+  follows?: string[];
+};
+
+export type Follow = {
+  id: string;
+  follower: string;
+  space: Space;
+  created: number;
 };
 
 export type Contact = {
@@ -222,6 +231,8 @@ export type Draft = {
   executionStrategy: SelectedStrategy | null;
   execution: Transaction[];
   updatedAt: number;
+  root: string;
+  snapshotBlock: number;
 };
 
 export type Metadata = {

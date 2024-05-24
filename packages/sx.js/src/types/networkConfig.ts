@@ -46,6 +46,10 @@ export type WhitelistStrategyConfig = {
   type: 'whitelist';
 };
 
+export type MerkleVotingStrategyConfig = {
+  type: 'merkleVoting';
+};
+
 export type EvmSlotValueStrategyConfig = {
   type: 'evmSlotValue';
   params: {
@@ -85,6 +89,7 @@ export type NetworkConfig = {
       | WhitelistStrategyConfig
       | EvmSlotValueStrategyConfig
       | OzVotesStorageProofStrategyConfig
+      | MerkleVotingStrategyConfig
       | undefined;
   };
 };

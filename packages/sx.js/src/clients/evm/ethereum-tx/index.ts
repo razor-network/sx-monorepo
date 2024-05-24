@@ -11,9 +11,18 @@ import AvatarExecutionStrategyAbi from './abis/AvatarExecutionStrategy.json';
 import TimelockExecutionStrategyAbi from './abis/TimelockExecutionStrategy.json';
 import AxiomExecutionStrategyAbi from './abis/AxiomExecutionStrategy.json';
 import IsokratiaExecutionStrategyAbi from './abis/IsokratiaExecutionStrategy.json';
+import VanillaExecutionStrategy from './abis/VanillaExecutionStrategy.json';
 import type { Signer } from '@ethersproject/abstract-signer';
-import type { Propose, UpdateProposal, Vote, Envelope, AddressConfig } from '../types';
+import type {
+  Propose,
+  UpdateProposal,
+  Vote,
+  Envelope,
+  AddressConfig,
+  StrategyConfig
+} from '../types';
 import type { EvmNetworkConfig } from '../../../types';
+import { getNextProposalId } from '../../../utils/space';
 
 type SpaceParams = {
   controller: string;
@@ -41,6 +50,11 @@ type TimelockExecutionStrategyParams = {
   vetoGuardian: string;
   spaces: string[];
   timelockDelay: bigint;
+  quorum: bigint;
+};
+
+type VanillaExecutionStrategyParams = {
+  owner: string;
   quorum: bigint;
 };
 
@@ -103,7 +117,7 @@ export class EthereumTx {
     saltNonce = saltNonce || `0x${randomBytes(32).toString('hex')}`;
 
     const implementationAddress =
-      this.networkConfig.executionStrategiesImplementations['SimpleQuorumAvatar'];
+      this.networkConfig.executionStrategiesImplementations['SimpleQuorumVanilla'];
 
     if (!implementationAddress) {
       throw new Error('Missing SimpleQuorumAvatar implementation address');
@@ -122,6 +136,58 @@ export class EthereumTx {
       [controller, target, spaces, quorum]
     );
     const functionData = avatarExecutionStrategyInterface.encodeFunctionData('setUp', [initParams]);
+
+    const sender = await signer.getAddress();
+    const salt = await this.getSalt({
+      sender,
+      saltNonce
+    });
+    const address = await proxyFactoryContract.predictProxyAddress(implementationAddress, salt);
+    const response = await proxyFactoryContract.deployProxy(
+      implementationAddress,
+      functionData,
+      saltNonce
+    );
+
+    return { address, txId: response.hash };
+  }
+
+  async deployVanillaExecution({
+    signer,
+    params: { owner, quorum },
+    saltNonce
+  }: {
+    signer: Signer;
+    params: VanillaExecutionStrategyParams;
+    saltNonce?: string;
+  }): Promise<{ txId: string; address: string }> {
+    saltNonce = saltNonce || `0x${randomBytes(32).toString('hex')}`;
+
+    console.log({ nc: this.networkConfig.executionStrategiesImplementations });
+
+    console.log('Deploying Vanilla Execution Strategy');
+
+    const implementationAddress =
+      this.networkConfig.executionStrategiesImplementations['SimpleQuorumVanilla'];
+
+    console.log({ implementationAddress });
+
+    if (!implementationAddress) {
+      throw new Error('Missing SimpleQuorumVanilla implementation address');
+    }
+
+    const abiCoder = new AbiCoder();
+    const timelockExecutionStrategyInterface = new Interface(VanillaExecutionStrategy);
+    const proxyFactoryContract = new Contract(
+      this.networkConfig.proxyFactory,
+      ProxyFactoryAbi,
+      signer
+    );
+
+    const initParams = abiCoder.encode(['address', 'uint256'], [owner, quorum]);
+    const functionData = timelockExecutionStrategyInterface.encodeFunctionData('setUp', [
+      initParams
+    ]);
 
     const sender = await signer.getAddress();
     const salt = await this.getSalt({
@@ -312,6 +378,17 @@ export class EthereumTx {
       signer
     );
 
+    console.log({
+      networkConfig: this.networkConfig,
+      proposalValidationStrategy,
+      proposalValidationStrategyMetadataUri,
+      daoUri,
+      metadataUri,
+      authenticators,
+      votingStrategies,
+      votingStrategiesMetadata
+    });
+
     const functionData = spaceInterface.encodeFunctionData('initialize', [
       [
         controller,
@@ -337,6 +414,7 @@ export class EthereumTx {
       this.networkConfig.masterSpace,
       salt
     );
+    console.log({ predicatedAddress: address });
     const response = await proxyFactoryContract.deployProxy(
       this.networkConfig.masterSpace,
       functionData,
@@ -370,7 +448,11 @@ export class EthereumTx {
     { signer, envelope }: { signer: Signer; envelope: Envelope<Propose> },
     opts: CallOptions = {}
   ) {
+    console.log('Calling propose here!!!');
     const proposerAddress = envelope.signatureData?.address || (await signer.getAddress());
+    const { root, snapshotBlock } = envelope.data;
+
+    console.log({ envelope, proposerAddress });
 
     const userStrategies = await getStrategiesWithParams(
       'propose',
@@ -380,13 +462,37 @@ export class EthereumTx {
       this.networkConfig
     );
 
+    const proposalId = await getNextProposalId(envelope.data.space);
+
+    console.log({ proposalId });
+
+    console.log({ userStrategies });
+
+    console.log({ envelopeExecutionStrategy: envelope.data.executionStrategy });
     const abiCoder = new AbiCoder();
+
+    const encodedData = abiCoder.encode(
+      ['bytes32', 'uint256', 'uint256'],
+      [root, BigInt(snapshotBlock), BigInt(proposalId)]
+    );
+
+    //! NOTE: This is a temporary solution to get the execution strategy
+    const executionStrategy: AddressConfig = {
+      addr: '0xCc09537aFb2eC8888a1AaFB990A2A7e371213fDf',
+      params: abiCoder.encode(
+        ['address', 'uint256'],
+        ['0x70A0a396D3D73387846042B8B02508cE4c947dc4', '500000000000000000000000']
+      )
+    };
+
+    console.log({ executionStrategy });
+
     const spaceInterface = new Interface(SpaceAbi);
     const functionData = spaceInterface.encodeFunctionData('propose', [
       proposerAddress,
       envelope.data.metadataUri,
-      envelope.data.executionStrategy,
-      abiCoder.encode(['tuple(int8 index, bytes params)[]'], [userStrategies])
+      executionStrategy,
+      encodedData
     ]);
 
     const selector = functionData.slice(0, 10);
@@ -445,13 +551,21 @@ export class EthereumTx {
   ) {
     const voterAddress = envelope.signatureData?.address || (await signer.getAddress());
 
+    // * Here fetching the only strategy which is associated with proposal
+    const customUserVotingStrategies: StrategyConfig[] = [
+      envelope.data.strategies[envelope.data.proposal - 1]
+    ] as StrategyConfig[];
+
+    //TODO: Find a user strategy that needs to be send to the contract
     const userVotingStrategies = await getStrategiesWithParams(
-      'propose',
-      envelope.data.strategies,
+      'vote',
+      customUserVotingStrategies,
       voterAddress,
       envelope.data,
       this.networkConfig
     );
+
+    console.log({ userVotingStrategies });
 
     const spaceInterface = new Interface(SpaceAbi);
     const functionData = spaceInterface.encodeFunctionData('vote', [

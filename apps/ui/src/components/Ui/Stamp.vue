@@ -8,6 +8,7 @@ withDefaults(
     size?: number;
     width?: number;
     height?: number;
+    ipfs?: string;
     cb?: string;
   }>(),
   {
@@ -19,7 +20,7 @@ withDefaults(
 
 <template>
   <img
-    :src="getStampUrl(type, id, width && height ? { width, height } : size, cb)"
+    :src="getStampUrl(type, id, width && height ? { width, height } : size, '', ipfs, cb)"
     class="rounded-full inline-block bg-skin-border"
     :style="
       !width && !height

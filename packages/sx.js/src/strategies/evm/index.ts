@@ -10,6 +10,7 @@ import type {
   IndexedConfig
 } from '../../clients/evm/types';
 import type { EvmNetworkConfig } from '../../types';
+import createMerkleVotingStrategy from './merkleVoting';
 
 export function getStrategy(address: string, networkConfig: EvmNetworkConfig): Strategy | null {
   const strategy = networkConfig.strategies[address];
@@ -31,6 +32,10 @@ export function getStrategy(address: string, networkConfig: EvmNetworkConfig): S
     return createMerkleWhitelist();
   }
 
+  if (strategy.type === 'merkleVoting') {
+    return createMerkleVotingStrategy();
+  }
+
   return null;
 }
 
@@ -41,9 +46,11 @@ export async function getStrategiesWithParams(
   data: Propose | Vote,
   networkConfig: EvmNetworkConfig
 ) {
+  console.log({ log: 'GETSTRATEGIESPARAMS', strategies });
   const results = await Promise.all(
     strategies.map(async strategyConfig => {
       const strategy = getStrategy(strategyConfig.address, networkConfig);
+      console.log('Strategy in getStrategiesWithParams', strategyConfig, strategy, call);
       if (!strategy) throw new Error('Invalid strategy');
 
       try {
@@ -54,6 +61,8 @@ export async function getStrategiesWithParams(
           strategyConfig.metadata || null,
           data
         );
+
+        console.log('Params returned from getParams', params);
 
         return {
           index: strategyConfig.index,

@@ -128,9 +128,17 @@ export function getProposalId(proposal: Proposal) {
 export function _n(
   value: any,
   notation: 'standard' | 'compact' = 'standard',
-  { maximumFractionDigits }: { maximumFractionDigits?: number } = {}
+  {
+    maximumFractionDigits,
+    formatDust = false
+  }: { maximumFractionDigits?: number; formatDust?: boolean } = {}
 ) {
-  const formatter = new Intl.NumberFormat('en', { notation, maximumFractionDigits });
+  if (formatDust && value > 0 && value < 0.01) return '~0';
+
+  const formatter = new Intl.NumberFormat('en', {
+    notation,
+    maximumFractionDigits
+  });
   return formatter.format(value).toLowerCase();
 }
 
@@ -371,8 +379,15 @@ export function getStampUrl(
   type: 'avatar' | 'space' | 'space-sx' | 'space-cover-sx' | 'token',
   id: string,
   size: number | { width: number; height: number },
-  hash?: string
+  hash?: string,
+  ipfs?: string,
+  cb?: string
 ) {
+  if (ipfs) {
+    return getUrl(ipfs) || '';
+  } else {
+    console.log({ cb });
+  }
   let sizeParam = '';
   if (typeof size === 'number') {
     sizeParam = `?s=${size * 2}`;

@@ -22,6 +22,18 @@ const DISCUSSION_DEFINITION = {
   examples: ['e.g. https://forum.balancer.fi/t/proposal…']
 };
 
+const ROOT_DEFINITION = {
+  type: 'string',
+  title: 'Root',
+  minLength: 1 // Adjust the validation as needed
+};
+
+const SNAPSHOT_BLOCK_NUMBER_DEFINITION = {
+  type: 'number',
+  title: 'Snapshot Block Number',
+  minimum: 1 // Assuming block numbers start from 1 and are integers
+};
+
 const CHOICES_DEFINITION = {
   type: 'array',
   title: 'Choices',
@@ -46,6 +58,7 @@ const {
 } = useWalletConnectTransaction();
 const { getCurrent } = useMetaStore();
 const spacesStore = useSpacesStore();
+const proposalsStore = useProposalsStore();
 
 const modalOpen = ref(false);
 const previewEnabled = ref(false);
@@ -147,16 +160,20 @@ const formErrors = computed(() => {
       type: 'object',
       title: 'Proposal',
       additionalProperties: false,
-      required: ['title', 'choices'],
+      required: ['title', 'choices', 'root', 'snapshotBlock'],
       properties: {
         title: TITLE_DEFINITION,
         discussion: DISCUSSION_DEFINITION,
-        choices: CHOICES_DEFINITION
+        choices: CHOICES_DEFINITION,
+        root: ROOT_DEFINITION,
+        snapshotBlock: SNAPSHOT_BLOCK_NUMBER_DEFINITION
       }
     },
     {
       title: proposal.value.title,
       discussion: proposal.value.discussion,
+      root: proposal.value.root,
+      snapshotBlock: proposal.value.snapshotBlock,
       choices: proposal.value.choices
     },
     {
@@ -200,10 +217,15 @@ async function handleProposeClick() {
         proposal.value.type,
         proposal.value.choices,
         proposal.value.executionStrategy?.address ?? null,
-        proposal.value.executionStrategy?.address ? proposal.value.execution : []
+        proposal.value.executionStrategy?.address ? proposal.value.execution : [],
+        proposal.value.root,
+        proposal.value.snapshotBlock
       );
     }
-    if (result) router.back();
+    if (result) {
+      proposalsStore.reset(address.value!, networkId.value!);
+      router.back();
+    }
   } finally {
     sending.value = false;
   }
@@ -379,6 +401,21 @@ export default defineComponent({
         />
         <UiLinkPreview :key="proposalKey || ''" :url="proposal.discussion" />
       </div>
+      <div class="s-base mb-5">
+        <UiInputString
+          :key="proposalKey || ''"
+          v-model="proposal.root"
+          :definition="ROOT_DEFINITION"
+          :error="formErrors.root"
+        />
+        <UiInputNumber
+          :key="proposalKey || ''"
+          v-model="proposal.snapshotBlock"
+          :definition="SNAPSHOT_BLOCK_NUMBER_DEFINITION"
+          :error="formErrors.snapshotBlock"
+        />
+      </div>
+
       <template v-if="votingTypes && (votingTypes.length > 1 || votingTypes[0] !== 'basic')">
         <EditorVotingType v-model="proposal" :voting-types="votingTypes" />
         <EditorChoices v-model="proposal" :definition="CHOICES_DEFINITION" />

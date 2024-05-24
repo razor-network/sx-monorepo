@@ -143,6 +143,18 @@ export function useActions() {
     executionStrategies: StrategyConfig[],
     controller: string
   ) {
+    console.log({
+      log: 'CREATE SPACE',
+      networkId,
+      salt,
+      metadata,
+      settings,
+      authenticators,
+      validationStrategy,
+      votingStrategies,
+      executionStrategies,
+      controller
+    });
     if (!web3.value.account) {
       forceLogin();
       return false;
@@ -220,7 +232,9 @@ export function useActions() {
     type: VoteType,
     choices: string[],
     executionStrategy: string | null,
-    execution: Transaction[]
+    execution: Transaction[],
+    root: string,
+    snapshotBlock: number
   ) {
     if (!web3.value.account) {
       forceLogin();
@@ -240,7 +254,9 @@ export function useActions() {
       discussion,
       type,
       choices: choices.filter(c => !!c),
-      execution: transactions
+      execution: transactions,
+      root,
+      snapshotBlock
     });
     if (!pinned || !pinned.cid) return false;
     console.log('IPFS', pinned);
@@ -254,7 +270,9 @@ export function useActions() {
         space,
         pinned.cid,
         executionStrategy,
-        convertToMetaTransactions(transactions)
+        convertToMetaTransactions(transactions),
+        root,
+        snapshotBlock
       )
     );
 
