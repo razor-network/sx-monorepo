@@ -3,7 +3,7 @@ import { Contract } from '@ethersproject/contracts';
 
 import SpaceABI from '../abis/Space.json';
 
-const PROVIDER_URL = 'https://ethereum-sepolia-rpc.publicnode.com';
+const PROVIDER_URL = 'https://mainnet.skalenodes.com/v1/turbulent-unique-scheat';
 
 export function getNextProposalId(space: string) {
   const provider = new JsonRpcProvider(PROVIDER_URL);

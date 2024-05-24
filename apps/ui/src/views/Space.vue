@@ -40,7 +40,8 @@ watchEffect(() => {
     offchainNetworks.includes(space.value.network) ? 'space' : 'space-sx',
     space.value.id,
     16,
-    getCacheHash(space.value.avatar)
+    '',
+    space.value.avatar
   );
   setFavicon(faviconUrl);
 });

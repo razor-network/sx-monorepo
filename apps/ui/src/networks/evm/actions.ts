@@ -10,7 +10,9 @@ import {
   evmGoerli,
   evmSepolia,
   evmLineaGoerli,
-  EvmNetworkConfig
+  EvmNetworkConfig,
+  evmSkaleTestnet,
+  evmSkaleMainnet
 } from '@snapshot-labs/sx';
 import { MANA_URL, executionCall } from '@/helpers/mana';
 import { CHAIN_IDS } from '@/helpers/constants';
@@ -54,7 +56,9 @@ const CONFIGS: Record<number, EvmNetworkConfig> = {
   1: evmMainnet,
   5: evmGoerli,
   11155111: evmSepolia,
-  59140: evmLineaGoerli
+  59140: evmLineaGoerli,
+  1444673419: evmSkaleTestnet,
+  278611351: evmSkaleMainnet
 };
 
 export function createActions(
@@ -151,7 +155,7 @@ export function createActions(
           authenticators: params.authenticators.map(config => config.address),
           votingStrategies: Array.from({ length: MAX_MERKLE_VOTING_STRATEGIES }, (_, i) => {
             return {
-              addr: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29',
+              addr: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95',
               params: abiCoder.encode(['uint256'], [BigInt(i + 1)])
             };
           }),
@@ -160,7 +164,7 @@ export function createActions(
           }),
           proposalValidationStrategy: {
             addr: params.validationStrategy.address,
-            params: abiCoder.encode(['uint256', 'uint256'], [BigInt(1), BigInt(10)])
+            params: abiCoder.encode(['uint256', 'uint256'], [BigInt(10), BigInt(100)])
           },
           metadataUri: `ipfs://${pinned.cid}`,
           proposalValidationStrategyMetadataUri,

@@ -9,7 +9,9 @@ export const CHAIN_IDS = {
   eth: 1,
   gor: 5,
   sep: 11155111,
-  'linea-testnet': 59140
+  'linea-testnet': 59140,
+  'skale-testnet': 1444673419,
+  'skale-mainnet': 278611351
 };
 
 export const COINGECKO_ASSET_PLATFORMS = {

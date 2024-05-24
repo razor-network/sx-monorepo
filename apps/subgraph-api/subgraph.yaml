@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: ProxyFactory
-    network: sepolia
+    network: mainnet
     source:
       abi: ProxyFactory
-      address: '0x542922aF76e8b55076a54b15fD972156f5B143B0'
-      startBlock: 5386251
+      address: '0x5ED79e82A59245488dfDC75B64AbC640348cbf4f'
+      startBlock: 5310200
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -31,7 +31,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: Space
-    network: sepolia
+    network: mainnet
     source:
       abi: Space
     mapping:
@@ -81,7 +81,7 @@ templates:
       file: ./src/mapping.ts
   - kind: ethereum
     name: AxiomExecutionStrategy
-    network: sepolia
+    network: mainnet
     source:
       abi: AxiomExecutionStrategy
     mapping:
@@ -99,7 +99,7 @@ templates:
       file: ./src/mapping.ts
   - kind: ethereum
     name: TimelockExecutionStrategy
-    network: sepolia
+    network: mainnet
     source:
       abi: TimelockExecutionStrategy
     mapping:
@@ -129,7 +129,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet
   - name: ProposalMetadata
     kind: file/ipfs
     mapping:
@@ -142,7 +142,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet
   - name: StrategiesParsedMetadataData
     kind: file/ipfs
     mapping:
@@ -155,7 +155,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet
   - name: VotingPowerValidationStrategyMetadata
     kind: file/ipfs
     mapping:
@@ -168,4 +168,4 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet

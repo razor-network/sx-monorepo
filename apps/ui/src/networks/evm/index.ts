@@ -74,6 +74,20 @@ export const METADATA: Record<string, Metadata> = {
     apiUrl: 'https://thegraph.goerli.zkevm.consensys.net/subgraphs/name/snapshot-labs/sx-subgraph',
     avatar: 'ipfs://bafkreibn4mjs54bnmvkrkiaiwp47gvcz6bervg2kr5ubknytfyz6l5wbs4',
     blockTime: 13.52926
+  },
+  'skale-testnet': {
+    name: 'Skale Testnet',
+    chainId: 1444673419,
+    apiUrl: 'https://34.170.76.2/subgraphs/name/snapshot-labs/sx-subgraph',
+    avatar: 'ipfs://bafkreid7ndxh6y2ljw2jhbisodiyrhcy2udvnwqgon5wgells3kh4si5z4',
+    blockTime: 6.7 // !NOTE: block time needs to precise else voting duration will be inaccurate
+  },
+  'skale-mainnet': {
+    name: 'Razor Skale Chain',
+    chainId: 278611351,
+    apiUrl: 'https://sx-indexer.razorscan.io/subgraphs/name/snapshot-labs/sx-subgraph',
+    avatar: 'https://ipfs.io/ipfs/QmRXoxMnz9ViWzQ7Ewg7dA8XtQoxp8gQ4cWjqj1Vk2ue2p/razor.png',
+    blockTime: 10.7 // * Calculated from the average block time of the last 1000, 10000 blocks
   }
 };
 
@@ -124,7 +138,16 @@ export function createEvmNetwork(networkId: NetworkID): Network {
     chainId,
     baseChainId: chainId,
     currentChainId: currentChainId ?? chainId,
-    supportsSimulation: ['eth', 'gor', 'sep', 'oeth', 'matic', 'arb1'].includes(networkId),
+    supportsSimulation: [
+      'eth',
+      'gor',
+      'sep',
+      'oeth',
+      'matic',
+      'arb1',
+      'skale-testnet',
+      'skale-mainnet'
+    ].includes(networkId),
     managerConnectors: EVM_CONNECTORS,
     actions: createActions(provider, helpers, chainId),
     api,

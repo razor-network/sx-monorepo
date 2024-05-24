@@ -30,7 +30,7 @@ function createStandardConfig(
       Comp: '0xc3482b52fE3B21caE9A34BF17E5808aC96319985',
       OZVotes: '0x5b30b72f79B88f737cfc7B7e6afba8F33C8D5f2c',
       Whitelist: '0xCE1cD69dA94974BcD6439489727E2471DD91BC32',
-      MerkleVoting: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29',
+      MerkleVoting: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95',
       ...additionalStrategies
     },
     ProposalValidations: {
@@ -159,6 +159,64 @@ export const evmNetworks = {
       Axiom: null,
       Isokratia: null
     }
+  },
+  'skale-testnet': {
+    Meta: {
+      eip712ChainId: 1444673419,
+      proxyFactory: '0x96f98916be07BCdB2556349b13D5F404B78E13D7',
+      masterSpace: '0xae55A5603ba260eb38a1567774395f3e1871707B'
+    },
+    Authenticators: {
+      EthSig: '0x0211a5e207fa0Fbbc17Fb6F297970e7a8E5d1c57',
+      EthTx: '0x4D2E0df9E26D034B6bA39DC983857e4bd18D4637'
+    },
+    Strategies: {
+      Vanilla: '0x697C27Edb2a52ef1E3B425C096f7F3e94685F969',
+      Comp: '0xF912b680B1FeB775913AD9A5BB2980e519E42D95',
+      OZVotes: '0x8B2759420d57f4A67208CE7FE08461Ae5695a723',
+      Whitelist: '0xD05365Bf55bfe95c9a7eF23798156580f9AB5231',
+      MerkleVoting: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95'
+    },
+    ProposalValidations: {
+      VotingPower: '0x690a8ac27242c7F0f3fA922ab5098E0b05f284c5',
+      WhitelistAndActiveProposalsLimiter: '0xB8EACf68daF6c5050fD2f3a02DFf1101F62F5bCc'
+    },
+    ExecutionStrategies: {
+      SimpleQuorumAvatar: '0x68F21c7fa715E9102C7476e3a08Ac896AFb9C3c9',
+      SimpleQuorumTimelock: '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4',
+      SimpleQuorumVanilla: '0x84CfB838FA4F868560f03eA633b1bDC6e958bf63',
+      Axiom: null,
+      Isokratia: null
+    }
+  },
+  'skale-mainnet': {
+    Meta: {
+      eip712ChainId: 278611351,
+      proxyFactory: '0x5ED79e82A59245488dfDC75B64AbC640348cbf4f',
+      masterSpace: '0xfEcEdAb2203C188B6C3902d29D28387B931591a2'
+    },
+    Authenticators: {
+      EthSig: '0x30267F0C98F8542037757996ea33957bE5A1FA71',
+      EthTx: '0x67BA8497e6C81FDEC385adB19d6DD00Abb515407'
+    },
+    Strategies: {
+      Vanilla: '0xd42e73a92b5CdFE404d38DA39924DDA7aC218201',
+      Comp: '0xeDbaBd3D5A871f54838315d99BF7d06749159005',
+      OZVotes: '0xa9f5E56320EED42051db050DfB73B5549c78BB3B',
+      Whitelist: '0x57A48038ebe35f33f71702e38CB664142Fe51Ddb',
+      MerkleVoting: '0x81321F01CE2CB74510A8B33f090c85887f51C402'
+    },
+    ProposalValidations: {
+      VotingPower: '0x81Ba276ee0CCAEE9Af3a28c08ECEdB017a640294',
+      WhitelistAndActiveProposalsLimiter: '0x95Fc7D95142b696204c9Fe6b16a040e08257d0a4'
+    },
+    ExecutionStrategies: {
+      SimpleQuorumAvatar: '0x6a7bA516Dcd924ba640DB8B92875D0d881B79Eb7',
+      SimpleQuorumTimelock: '0xeD352980Dc57f18FBC7afa9A78BCbD95c2f0af58',
+      SimpleQuorumVanilla: '0xc7c1b38988a0C7d2f7c7318216951a92A4cc4bC5',
+      Axiom: null,
+      Isokratia: null
+    }
   }
 } as const;
 
@@ -169,3 +227,5 @@ export const evmOptimism = createEvmConfig('oeth');
 export const evmPolygon = createEvmConfig('matic');
 export const evmArbitrum = createEvmConfig('arb1');
 export const evmLineaGoerli = createEvmConfig('linea-testnet');
+export const evmSkaleTestnet = createEvmConfig('skale-testnet');
+export const evmSkaleMainnet = createEvmConfig('skale-mainnet');

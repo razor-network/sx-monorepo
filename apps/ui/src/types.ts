@@ -13,6 +13,8 @@ export type NetworkID =
   | 'gor'
   | 'sep'
   | 'linea-testnet'
+  | 'skale-testnet'
+  | 'skale-mainnet'
   | 'sn'
   | 'sn-tn'
   | 'sn-sep';

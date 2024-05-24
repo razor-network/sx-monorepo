@@ -3,8 +3,8 @@ import { Contract } from '@ethersproject/contracts';
 
 import MerkleVotingABI from '../abis/MerkleVoting.json';
 
-const MERKLE_VOTING_RPC_PROVIDER = 'https://ethereum-sepolia-rpc.publicnode.com';
-const MERKLE_VOTING_API = 'https://35.185.190.187';
+const MERKLE_VOTING_RPC_PROVIDER = 'https://mainnet.skalenodes.com/v1/turbulent-unique-scheat';
+const MERKLE_VOTING_API = 'https://sx-api.razorscan.io';
 
 export async function getMerkleVotingParams(
   strategyAddress: string,

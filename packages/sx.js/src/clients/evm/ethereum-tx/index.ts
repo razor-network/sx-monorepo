@@ -4,7 +4,7 @@ import { keccak256 } from '@ethersproject/solidity';
 import randomBytes from 'randombytes';
 import { getAuthenticator } from '../../../authenticators/evm';
 import { getStrategiesWithParams } from '../../../strategies/evm';
-import { evmGoerli } from '../../../networks';
+import { evmSkaleMainnet } from '../../../networks';
 import SpaceAbi from './abis/Space.json';
 import ProxyFactoryAbi from './abis/ProxyFactory.json';
 import AvatarExecutionStrategyAbi from './abis/AvatarExecutionStrategy.json';
@@ -102,7 +102,7 @@ export class EthereumTx {
   networkConfig: EvmNetworkConfig;
 
   constructor(opts?: { networkConfig: EvmNetworkConfig }) {
-    this.networkConfig = opts?.networkConfig || evmGoerli;
+    this.networkConfig = opts?.networkConfig || evmSkaleMainnet;
   }
 
   async deployAvatarExecution({
@@ -476,12 +476,14 @@ export class EthereumTx {
       [root, BigInt(snapshotBlock), BigInt(proposalId)]
     );
 
+    const signerAddress = await signer.getAddress();
+
     //! NOTE: This is a temporary solution to get the execution strategy
     const executionStrategy: AddressConfig = {
-      addr: '0xCc09537aFb2eC8888a1AaFB990A2A7e371213fDf',
+      addr: '0x746537F42942c0bAF2057A0eF8A394123Bce40a3', // !NOTE: Update this once deployed
       params: abiCoder.encode(
         ['address', 'uint256'],
-        ['0x70A0a396D3D73387846042B8B02508cE4c947dc4', '500000000000000000000000']
+        [signerAddress, '100000000000000000000000000']
       )
     };
 
