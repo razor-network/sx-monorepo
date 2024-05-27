@@ -81,7 +81,7 @@ watch(route, to => {
           class="flex items-center"
           style="font-size: 24px"
         >
-          snapshot x
+          Razor Network Governance
         </router-link>
       </div>
       <div :key="web3.account" class="flex">
