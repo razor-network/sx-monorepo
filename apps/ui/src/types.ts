@@ -7,16 +7,21 @@ export type NetworkID =
   | 's'
   | 's-tn'
   | 'eth'
+  | 'matic'
+  | 'arb1'
+  | 'oeth'
   | 'gor'
   | 'sep'
   | 'linea-testnet'
+  | 'skale-testnet'
+  | 'skale-mainnet'
   | 'sn'
   | 'sn-tn'
-  | 'sn-sep'
-  | 'matic'
-  | 'arb1';
+  | 'sn-sep';
 
-export type Choice = 'for' | 'against' | 'abstain' | number | number[];
+export type Choice = 'for' | 'against' | 'abstain' | number | number[] | Record<string, number>;
+
+export type Privacy = 'shutter' | null;
 
 export type VoteType =
   | 'basic'
@@ -30,6 +35,12 @@ export type VoteType =
 export type SelectedStrategy = {
   address: string;
   type: string;
+};
+
+export type SpaceMetadataTreasury = {
+  name: string | null;
+  network: NetworkID | null;
+  address: string | null;
 };
 
 export type SpaceMetadataDelegation = {
@@ -50,8 +61,7 @@ export type SpaceMetadata = {
   github: string;
   discord: string;
   votingPowerSymbol: string;
-  walletNetwork: NetworkID | null;
-  walletAddress: string | null;
+  treasuries: SpaceMetadataTreasury[];
   delegations: SpaceMetadataDelegation[];
 };
 
@@ -73,18 +83,21 @@ export type StrategyParsedMetadata = {
 export type Space = {
   id: string;
   network: NetworkID;
+  verified: boolean;
+  turbo: boolean;
   snapshot_chain_id?: number;
   name: string;
   avatar: string;
   cover: string;
   about?: string;
   external_url: string;
+  treasuries: SpaceMetadataTreasury[];
   delegations: SpaceMetadataDelegation[];
   twitter: string;
   github: string;
   discord: string;
+  coingecko?: string;
   voting_power_symbol: string;
-  wallet: string;
   controller: string;
   voting_delay: number;
   min_voting_period: number;
@@ -102,8 +115,15 @@ export type Space = {
   authenticators: string[];
   executors: string[];
   executors_types: string[];
+  executors_strategies: {
+    id: string;
+    type: string;
+    treasury: string | null;
+    treasury_chain: number | null;
+  }[];
   proposal_count: number;
   vote_count: number;
+  follower_count?: number;
   created: number;
 };
 
@@ -113,12 +133,15 @@ export type Proposal = {
   network: NetworkID;
   type: VoteType;
   quorum: number;
+  quorum_type?: 'default' | 'rejection';
   space: {
     id: string;
     name: string;
     snapshot_chain_id?: number;
     avatar: string;
     controller: string;
+    admins?: string[];
+    moderators?: string[];
     voting_power_symbol: string;
     authenticators: string[];
     executors: string[];
@@ -127,6 +150,7 @@ export type Proposal = {
   };
   author: {
     id: string;
+    name?: string;
   };
   execution_hash: string;
   metadata_uri: string;
@@ -155,16 +179,26 @@ export type Proposal = {
   veto_tx: string | null;
   vote_count: number;
   has_execution_window_opened: boolean;
+  execution_ready: boolean;
   vetoed: boolean;
   completed: boolean;
   cancelled: boolean;
   state: ProposalState;
+  privacy: Privacy;
 };
 
 export type User = {
   id: string;
   proposal_count: number;
   vote_count: number;
+  created: number;
+  follows?: string[];
+};
+
+export type Follow = {
+  id: string;
+  follower: string;
+  space: Space;
   created: number;
 };
 
@@ -183,7 +217,7 @@ export type Vote = {
     id: string;
   };
   proposal: number | string;
-  choice: number;
+  choice: number | number[] | Record<string, number>;
   vp: number;
   created: number;
   tx: string;
@@ -199,6 +233,8 @@ export type Draft = {
   executionStrategy: SelectedStrategy | null;
   execution: Transaction[];
   updatedAt: number;
+  root: string;
+  snapshotBlock: number;
 };
 
 export type Metadata = {
@@ -257,3 +293,6 @@ export type ContractCallTransaction = BaseTransaction & {
 };
 
 export type Transaction = SendTokenTransaction | SendNftTransaction | ContractCallTransaction;
+
+// Utils
+export type RequiredProperty<T> = { [P in keyof T]: Required<NonNullable<T[P]>> };

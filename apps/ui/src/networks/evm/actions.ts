@@ -3,13 +3,16 @@ import { Contract } from '@ethersproject/contracts';
 import {
   clients,
   getEvmStrategy,
+  evmOptimism,
   evmArbitrum,
   evmPolygon,
   evmMainnet,
   evmGoerli,
   evmSepolia,
   evmLineaGoerli,
-  EvmNetworkConfig
+  EvmNetworkConfig,
+  evmSkaleTestnet,
+  evmSkaleMainnet
 } from '@snapshot-labs/sx';
 import { MANA_URL, executionCall } from '@/helpers/mana';
 import { CHAIN_IDS } from '@/helpers/constants';
@@ -23,6 +26,7 @@ import {
   createStrategyPicker
 } from '@/networks/common/helpers';
 import { EVM_CONNECTORS } from '@/networks/common/constants';
+import { vote as highlightVote } from '@/helpers/highlight';
 import type { Web3Provider } from '@ethersproject/providers';
 import type {
   Connector,
@@ -41,14 +45,20 @@ import type {
   Choice,
   NetworkID
 } from '@/types';
+import { getSwapLink } from '@/helpers/link';
+import { AbiCoder } from '@ethersproject/abi';
+import { MAX_MERKLE_VOTING_STRATEGIES } from './constants';
 
 const CONFIGS: Record<number, EvmNetworkConfig> = {
+  10: evmOptimism,
   137: evmPolygon,
   42161: evmArbitrum,
   1: evmMainnet,
   5: evmGoerli,
   11155111: evmSepolia,
-  59140: evmLineaGoerli
+  59140: evmLineaGoerli,
+  1444673419: evmSkaleTestnet,
+  278611351: evmSkaleMainnet
 };
 
 export function createActions(
@@ -117,6 +127,7 @@ export function createActions(
         metadata: SpaceMetadata;
       }
     ) {
+      const abiCoder = new AbiCoder();
       await verifyNetwork(web3, chainId);
 
       const pinned = await helpers.pin(
@@ -135,22 +146,25 @@ export function createActions(
         params.validationStrategy
       );
 
+      // TODO: votingStrategiesMetadata can be improved
       const response = await client.deploySpace({
         signer: web3.getSigner(),
         saltNonce: salt,
         params: {
           ...params,
           authenticators: params.authenticators.map(config => config.address),
-          votingStrategies: params.votingStrategies.map(config => ({
-            addr: config.address,
-            params: config.generateParams ? config.generateParams(config.params)[0] : '0x'
-          })),
-          votingStrategiesMetadata: metadataUris,
+          votingStrategies: Array.from({ length: MAX_MERKLE_VOTING_STRATEGIES }, (_, i) => {
+            return {
+              addr: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95',
+              params: abiCoder.encode(['uint256'], [BigInt(i + 1)])
+            };
+          }),
+          votingStrategiesMetadata: Array.from({ length: MAX_MERKLE_VOTING_STRATEGIES }, () => {
+            return metadataUris[0];
+          }),
           proposalValidationStrategy: {
             addr: params.validationStrategy.address,
-            params: params.validationStrategy.generateParams
-              ? params.validationStrategy.generateParams(params.validationStrategy.params)[0]
-              : '0x'
+            params: abiCoder.encode(['uint256', 'uint256'], [BigInt(10), BigInt(100)])
           },
           metadataUri: `ipfs://${pinned.cid}`,
           proposalValidationStrategyMetadataUri,
@@ -183,7 +197,9 @@ export function createActions(
       space: Space,
       cid: string,
       executionStrategy: string | null,
-      transactions: MetaTransaction[]
+      transactions: MetaTransaction[],
+      root: string,
+      snapshotBlock: number
     ) => {
       await verifyNetwork(web3, chainId);
 
@@ -195,6 +211,13 @@ export function createActions(
         strategiesIndicies: space.voting_power_validation_strategy_strategies.map((_, i) => i),
         connectorType,
         isContract
+      });
+
+      console.log({
+        log: 'CREATE PROPOSAL',
+        relayerType,
+        authenticator,
+        strategies
       });
 
       let selectedExecutionStrategy;
@@ -228,7 +251,9 @@ export function createActions(
         authenticator,
         strategies: strategiesWithMetadata,
         executionStrategy: selectedExecutionStrategy,
-        metadataUri: `ipfs://${cid}`
+        metadataUri: `ipfs://${cid}`,
+        root,
+        snapshotBlock
       };
 
       if (relayerType === 'evm') {
@@ -365,8 +390,13 @@ export function createActions(
         strategies: strategiesWithMetadata,
         proposal: proposal.proposal_id as number,
         choice: getSdkChoice(choice),
-        metadataUri: ''
+        metadataUri: '',
+        chainId
       };
+
+      if (!isContract && proposal.execution_strategy_type === 'Axiom') {
+        return highlightVote({ signer: web3.getSigner(), data });
+      }
 
       if (relayerType === 'evm') {
         return ethSigClient.vote({
@@ -385,8 +415,14 @@ export function createActions(
         { noWait: isContract }
       );
     },
-    finalizeProposal: () => null,
-    receiveProposal: () => null,
+    finalizeProposal: async (web3: Web3Provider, proposal: Proposal) => {
+      await executionCall(chainId, 'finalizeProposal', {
+        space: proposal.space.id,
+        proposalId: proposal.proposal_id
+      });
+
+      return null;
+    },
     executeTransactions: async (web3: Web3Provider, proposal: Proposal) => {
       await verifyNetwork(web3, chainId);
 
@@ -553,13 +589,18 @@ export function createActions(
     },
     send: (envelope: any) => ethSigClient.send(envelope),
     getVotingPower: async (
+      spaceId: string,
       strategiesAddresses: string[],
       strategiesParams: any[],
       strategiesMetadata: StrategyParsedMetadata[],
       voterAddress: string,
-      snapshotInfo: SnapshotInfo
+      snapshotInfo: SnapshotInfo,
+      proposalId: number
     ): Promise<VotingPower[]> => {
       if (snapshotInfo.at === null) throw new Error('EVM requires block number to be defined');
+
+      // * Filtering strategiesAddresses to only call the strategies that is associated with that proposal
+      strategiesAddresses = [strategiesAddresses[proposalId - 1]];
 
       return Promise.all(
         strategiesAddresses.map(async (address, i) => {
@@ -568,13 +609,16 @@ export function createActions(
 
           const strategyMetadata = await parseStrategyMetadata(strategiesMetadata[i].payload);
 
+          console.log({ log: 'createActions -> getVotingPower', strategiesMetadata, snapshotInfo });
+
           const value = await strategy.getVotingPower(
             address,
             voterAddress,
             strategyMetadata,
             snapshotInfo.at!,
             strategiesParams[i],
-            provider
+            provider,
+            proposalId
           );
 
           const token = ['comp', 'ozVotes'].includes(strategy.type)
@@ -585,7 +629,8 @@ export function createActions(
             value,
             decimals: strategiesMetadata[i]?.decimals ?? 0,
             symbol: strategiesMetadata[i]?.symbol ?? '',
-            token
+            token,
+            swapLink: getSwapLink(strategy.type, address, chainId)
           };
         })
       );

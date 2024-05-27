@@ -46,6 +46,10 @@ export type WhitelistStrategyConfig = {
   type: 'whitelist';
 };
 
+export type MerkleVotingStrategyConfig = {
+  type: 'merkleVoting';
+};
+
 export type EvmSlotValueStrategyConfig = {
   type: 'evmSlotValue';
   params: {
@@ -65,6 +69,7 @@ export type NetworkConfig = {
   spaceFactory: string;
   masterSpace: string;
   starknetCommit: string;
+  starknetCore: string;
   herodotusAccumulatesChainId: number;
   authenticators: {
     [key: string]:
@@ -84,13 +89,18 @@ export type NetworkConfig = {
       | WhitelistStrategyConfig
       | EvmSlotValueStrategyConfig
       | OzVotesStorageProofStrategyConfig
+      | MerkleVotingStrategyConfig
       | undefined;
   };
 };
 
 export type EvmNetworkConfig = Omit<
   NetworkConfig,
-  'eip712ChainId' | 'spaceFactory' | 'starknetCommit' | 'herodotusAccumulatesChainId'
+  | 'eip712ChainId'
+  | 'spaceFactory'
+  | 'starknetCommit'
+  | 'starknetCore'
+  | 'herodotusAccumulatesChainId'
 > & {
   eip712ChainId: number;
   proxyFactory: string;

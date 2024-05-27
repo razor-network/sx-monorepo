@@ -2,6 +2,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
 import { formatUnits } from '@ethersproject/units';
 import { getNames } from '@/helpers/stamp';
+import { formatAddress } from '@/helpers/utils';
 import networks from '@/helpers/networks.json';
 
 networks['starknet'] = {
@@ -21,11 +22,16 @@ const state = reactive({
   network: networks[defaultNetwork],
   authLoading: false
 });
+const authInitiated = ref(false);
 
 export function useWeb3() {
   const { mixpanel } = useMixpanel();
 
-  async function login(connector = 'injected') {
+  async function login(connector: string | undefined | boolean = 'injected') {
+    authInitiated.value = true;
+
+    if (!connector) return;
+
     auth = getInstance();
     state.authLoading = true;
     await auth.login(connector);
@@ -35,7 +41,12 @@ export function useWeb3() {
       auth.web3 = new Web3Provider(auth.provider.value, 'any');
       await loadProvider();
     }
-    state.authLoading = false;
+
+    // NOTE: Handle case where metamask stays locked after user ignored
+    // the unlock request on subsequent page loads
+    if (state.type !== 'injected' || auth.provider?.value?._state?.isUnlocked) {
+      state.authLoading = false;
+    }
   }
 
   function logout() {
@@ -56,7 +67,7 @@ export function useWeb3() {
         });
         auth.provider.value.on('accountsChanged', async accounts => {
           if (accounts.length !== 0) {
-            state.account = accounts[0];
+            state.account = formatAddress(accounts[0]);
             await login();
           }
         });
@@ -82,16 +93,15 @@ export function useWeb3() {
       }
       handleChainChanged(network.chainId);
       const acc = accounts.length > 0 ? accounts[0] : null;
-      const names = await getNames([acc]);
-      state.account = acc;
-      state.name = names[acc];
-      state.type = connector;
 
-      if (typeof connector === 'undefined') {
-        // NOTE: metamask doesn't return connectorName
-        state.type = 'injected';
+      if (acc) {
+        const names = await getNames([acc]);
+        state.account = formatAddress(acc);
+        state.name = names[acc];
       }
 
+      // NOTE: metamask doesn't return connectorName
+      state.type = connector ?? 'injected';
       state.walletconnect = auth.provider.value?.wc?.peerMeta?.name || '';
     } catch (e) {
       state.account = '';
@@ -122,6 +132,7 @@ export function useWeb3() {
   return {
     login,
     logout,
+    authInitiated,
     web3: computed(() => state),
     web3Account: computed(() => state.account)
   };

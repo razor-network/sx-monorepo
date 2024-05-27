@@ -1,17 +1,8 @@
 <script lang="ts" setup>
-import { _n, getUrl } from '@/helpers/utils';
-import { NetworkID, Space } from '@/types';
-import { getNetwork } from '@/networks';
+import { _n } from '@/helpers/utils';
+import { Space } from '@/types';
 
 const props = defineProps<{ space: Space }>();
-
-const currentNetwork = computed(() => {
-  try {
-    return getNetwork(props.space.network as NetworkID);
-  } catch (e) {
-    return null;
-  }
-});
 
 const spacesStore = useSpacesStore();
 </script>
@@ -21,23 +12,15 @@ const spacesStore = useSpacesStore();
     :to="{ name: 'space-overview', params: { id: `${space.network}:${space.id}` } }"
     class="text-skin-text border rounded-lg block h-[280px] relative group overflow-hidden"
   >
-    <SpaceCover
-      v-if="props.space.cover"
-      :space="props.space"
-      class="!rounded-none w-full h-[68px] object-cover absolute"
-    />
-    <div v-else class="!rounded-none w-full h-[68px] absolute bg-skin-border" />
+    <SpaceCover :space="props.space" class="!rounded-none w-full h-[68px] absolute" />
     <div class="relative inline-block mx-4 mt-[34px]">
-      <SpaceAvatar
-        :space="space"
-        :size="50"
-        class="border-skin-bg !bg-skin-border rounded-md mb-2 border-[3px]"
-      />
-      <img
-        :src="(currentNetwork && getUrl(currentNetwork.avatar)) ?? undefined"
-        :title="(currentNetwork && currentNetwork.name) ?? undefined"
-        class="w-[18px] h-[18px] rounded-full -right-1.5 bottom-0 absolute border-2 border-skin-bg"
-      />
+      <UiBadgeNetwork :id="space.network" class="mb-2">
+        <SpaceAvatar
+          :space="space"
+          :size="50"
+          class="border-skin-bg !bg-skin-border rounded-md border-[3px]"
+        />
+      </UiBadgeNetwork>
     </div>
     <button
       class="hidden group-hover:block absolute top-3 right-3 hover:text-skin-link"

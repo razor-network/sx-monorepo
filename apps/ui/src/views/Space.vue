@@ -7,6 +7,7 @@ const { param } = useRouteParser('id');
 const { resolved, address, networkId } = useResolve(param);
 const uiStore = useUiStore();
 const spacesStore = useSpacesStore();
+const { loadVotes } = useAccount();
 
 const space = computed(() => {
   if (!resolved.value) return null;
@@ -27,13 +28,20 @@ watch(
 );
 
 watchEffect(() => {
+  if (!resolved.value || !networkId.value || !address.value) return;
+
+  loadVotes(networkId.value, [address.value]);
+});
+
+watchEffect(() => {
   if (!space.value) return setFavicon(null);
 
   const faviconUrl = getStampUrl(
     offchainNetworks.includes(space.value.network) ? 'space' : 'space-sx',
     space.value.id,
     16,
-    getCacheHash(space.value.avatar)
+    '',
+    space.value.avatar
   );
   setFavicon(faviconUrl);
 });

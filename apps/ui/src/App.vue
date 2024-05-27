@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { startIntercom } from './helpers/intercom';
+
 const el = ref(null);
 
 const route = useRoute();
@@ -6,8 +8,7 @@ const router = useRouter();
 const uiStore = useUiStore();
 const { modalOpen } = useModal();
 const { init, app } = useApp();
-const { web3, web3Account } = useWeb3();
-const { loadVotes, votes } = useAccount();
+const { web3 } = useWeb3();
 const { isSwiping, direction } = useSwipe(el);
 const { createDraft } = useEditor();
 const { spaceKey, network, executionStrategy, transaction, reset } = useWalletConnectTransaction();
@@ -15,6 +16,10 @@ const { spaceKey, network, executionStrategy, transaction, reset } = useWalletCo
 provide('web3', web3);
 
 const scrollDisabled = computed(() => modalOpen.value || uiStore.sidebarOpen);
+
+const hasAppNav = computed(() =>
+  ['space', 'my', 'settings'].includes(String(route.matched[0]?.name))
+);
 
 function handleTransactionAccept() {
   if (!spaceKey.value || !executionStrategy.value || !transaction.value) return;
@@ -33,6 +38,7 @@ function handleTransactionReject() {
 }
 
 onMounted(async () => {
+  startIntercom();
   uiStore.restorePendingTransactions();
   await init();
 });
@@ -40,11 +46,6 @@ onMounted(async () => {
 watch(scrollDisabled, val => {
   const el = document.body;
   el.classList[val ? 'add' : 'remove']('overflow-hidden');
-});
-
-watch(web3Account, async () => {
-  if (web3Account.value) return await loadVotes();
-  votes.value = {};
 });
 
 watch(route, () => {
@@ -74,7 +75,7 @@ watch(isSwiping, () => {
         v-if="uiStore.sidebarOpen"
         class="backdrop lg:hidden"
         :style="{
-          left: `${72 + (route.matched[0]?.name === 'space' ? 240 : 0)}px`
+          left: `${72 + (hasAppNav ? 240 : 0)}px`
         }"
         @click="uiStore.toggleSidebar"
       />

@@ -25,6 +25,13 @@ export type ApiSpace = {
     wallet: string;
     executors: string[];
     executors_types: string[];
+    executors_strategies: {
+      id: string;
+      type: string;
+      treasury: string | null;
+      treasury_chain: number | null;
+    }[];
+    treasuries: string[];
     delegations: string[];
   };
   controller: string;
@@ -97,6 +104,7 @@ export type ApiProposal = {
   execution_tx: string | null;
   veto_tx: string | null;
   vote_count: number;
+  execution_ready: boolean;
   executed: boolean;
   vetoed: boolean;
   completed: boolean;

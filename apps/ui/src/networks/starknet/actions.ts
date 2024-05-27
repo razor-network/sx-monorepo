@@ -16,7 +16,7 @@ import {
   createStrategyPicker
 } from '@/networks/common/helpers';
 import { EVM_CONNECTORS, STARKNET_CONNECTORS } from '@/networks/common/constants';
-import type { RpcProvider } from 'starknet';
+import { CallData, type Account, type RpcProvider } from 'starknet';
 import type { MetaTransaction } from '@snapshot-labs/sx/dist/utils/encoding/execution-hash';
 import type {
   Connector,
@@ -82,8 +82,25 @@ export function createActions(
     async predictSpaceAddress(web3: any, { salt }) {
       return client.predictSpaceAddress({ account: web3.provider.account, saltNonce: salt });
     },
-    async deployDependency() {
-      throw new Error('Not implemented');
+    async deployDependency(
+      web3: any,
+      params: {
+        controller: string;
+        spaceAddress: string;
+        strategy: StrategyConfig;
+      }
+    ) {
+      if (!params.strategy.deploy) {
+        throw new Error('This strategy is not deployable');
+      }
+
+      return params.strategy.deploy(
+        client,
+        web3.getSigner(),
+        params.controller,
+        params.spaceAddress,
+        params.strategy.params
+      );
     },
     async createSpace(
       web3: any,
@@ -361,7 +378,6 @@ export function createActions(
       });
     },
     finalizeProposal: () => null,
-    receiveProposal: () => null,
     executeTransactions: () => null,
     executeQueuedProposal: () => null,
     vetoProposal: () => null,
@@ -437,10 +453,27 @@ export function createActions(
         }
       });
     },
-    delegate: () => {
-      throw new Error('Not implemented');
+    delegate: async (
+      web3: any,
+      space: Space,
+      networkId: NetworkID,
+      delegatee: string,
+      delegationContract: string
+    ) => {
+      const [, contractAddress] = delegationContract.split(':');
+
+      const { account }: { account: Account } = web3.provider;
+
+      return account.execute({
+        contractAddress,
+        entrypoint: 'delegate',
+        calldata: CallData.compile({
+          delegatee
+        })
+      });
     },
     getVotingPower: async (
+      spaceId: string,
       strategiesAddresses: string[],
       strategiesParams: any[],
       strategiesMetadata: StrategyParsedMetadata[],

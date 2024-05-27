@@ -3,22 +3,29 @@ import {
   clients,
   evmPolygon,
   evmArbitrum,
+  evmOptimism,
   evmMainnet,
   evmGoerli,
   evmSepolia,
   evmLineaGoerli,
-  EvmNetworkConfig
+  EvmNetworkConfig,
+  evmSkaleTestnet,
+  evmSkaleMainnet
 } from '@snapshot-labs/sx';
+import fetch from 'cross-fetch';
 import { createWalletProxy } from './dependencies';
 import { rpcError, rpcSuccess } from '../utils';
 
 export const NETWORKS = new Map<number, EvmNetworkConfig>([
+  [10, evmOptimism],
   [137, evmPolygon],
   [42161, evmArbitrum],
   [1, evmMainnet],
   [5, evmGoerli],
   [11155111, evmSepolia],
-  [59140, evmLineaGoerli]
+  [59140, evmLineaGoerli],
+  [1444673419, evmSkaleTestnet],
+  [278611351, evmSkaleMainnet]
 ]);
 
 export const createNetworkHandler = (chainId: number) => {
@@ -69,6 +76,31 @@ export const createNetworkHandler = (chainId: number) => {
     }
   }
 
+  async function finalizeProposal(id: number, params: any, res: Response) {
+    try {
+      const { space, proposalId } = params;
+
+      const response = await fetch('http://ec2-44-197-171-215.compute-1.amazonaws.com:8000/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chainId,
+          space,
+          proposalId,
+          feeData: {
+            maxFeePerGas: '50000000000'
+          }
+        })
+      });
+
+      const result = await response.text();
+
+      return rpcSuccess(res, result, id);
+    } catch (e) {
+      return rpcError(res, 500, e, id);
+    }
+  }
+
   async function execute(id: number, params: any, res: Response) {
     try {
       const { space, proposalId, executionParams } = params;
@@ -104,5 +136,5 @@ export const createNetworkHandler = (chainId: number) => {
     }
   }
 
-  return { send, execute, executeQueuedProposal };
+  return { send, finalizeProposal, execute, executeQueuedProposal };
 };

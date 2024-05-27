@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: ProxyFactory
-    network: sepolia
+    network: mainnet
     source:
       abi: ProxyFactory
-      address: "0x4b4f7f64be813ccc66aefc3bfce2baa01188631c"
-      startBlock: 4519171
+      address: '0x5ED79e82A59245488dfDC75B64AbC640348cbf4f'
+      startBlock: 5310200
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -20,6 +20,8 @@ dataSources:
           file: ./abis/ProxyFactory.json
         - name: AvatarExecutionStrategy
           file: ./abis/AvatarExecutionStrategy.json
+        - name: AxiomExecutionStrategy
+          file: ./abis/AxiomExecutionStrategy.json
         - name: TimelockExecutionStrategy
           file: ./abis/TimelockExecutionStrategy.json
       eventHandlers:
@@ -29,7 +31,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: Space
-    network: sepolia
+    network: mainnet
     source:
       abi: Space
     mapping:
@@ -78,8 +80,26 @@ templates:
           handler: handleProposalValidationStrategyUpdated
       file: ./src/mapping.ts
   - kind: ethereum
+    name: AxiomExecutionStrategy
+    network: mainnet
+    source:
+      abi: AxiomExecutionStrategy
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ProposalExecuted
+      abis:
+        - name: AxiomExecutionStrategy
+          file: ./abis/AxiomExecutionStrategy.json
+      eventHandlers:
+        - event: WriteOffchainVotes(uint256,uint256,uint256,uint256,uint256)
+          handler: handleAxiomWriteOffchainVotes
+      file: ./src/mapping.ts
+  - kind: ethereum
     name: TimelockExecutionStrategy
-    network: sepolia
+    network: mainnet
     source:
       abi: TimelockExecutionStrategy
     mapping:
@@ -109,7 +129,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet
   - name: ProposalMetadata
     kind: file/ipfs
     mapping:
@@ -122,7 +142,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet
   - name: StrategiesParsedMetadataData
     kind: file/ipfs
     mapping:
@@ -135,7 +155,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet
   - name: VotingPowerValidationStrategyMetadata
     kind: file/ipfs
     mapping:
@@ -148,4 +168,4 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
-    network: sepolia
+    network: mainnet

@@ -11,16 +11,42 @@ const starknetTestnetNetwork = createStarknetNetwork('sn-tn');
 const starknetSepoliaNetwork = createStarknetNetwork('sn-sep');
 const polygonNetwork = createEvmNetwork('matic');
 const arbitrumNetwork = createEvmNetwork('arb1');
+const optimismNetwork = createEvmNetwork('oeth');
 const ethereumNetwork = createEvmNetwork('eth');
 const goerliNetwork = createEvmNetwork('gor');
 const sepoliaNetwork = createEvmNetwork('sep');
 const lineaTestnetNetwork = createEvmNetwork('linea-testnet');
+const skaleTestnetNetwork = createEvmNetwork('skale-testnet');
+const skaleMainnetNetwork = createEvmNetwork('skale-mainnet');
 
 export const enabledNetworks: NetworkID[] = import.meta.env.VITE_ENABLED_NETWORKS
   ? (import.meta.env.VITE_ENABLED_NETWORKS.split(',') as NetworkID[])
-  : ['s', 's-tn', 'eth', 'matic', 'arb1', 'gor', 'sep', 'sn', 'sn-sep'];
+  : [
+      's',
+      's-tn',
+      'eth',
+      'matic',
+      'arb1',
+      'oeth',
+      'gor',
+      'sep',
+      'skale-testnet',
+      'skale-mainnet',
+      'sn',
+      'sn-sep'
+    ];
 
-export const evmNetworks: NetworkID[] = ['eth', 'matic', 'arb1', 'gor', 'sep', 'linea-testnet'];
+export const evmNetworks: NetworkID[] = [
+  'eth',
+  'matic',
+  'arb1',
+  'oeth',
+  'gor',
+  'sep',
+  'linea-testnet',
+  'skale-testnet',
+  'skale-mainnet'
+];
 export const offchainNetworks: NetworkID[] = ['s', 's-tn'];
 
 export const getNetwork = (id: NetworkID) => {
@@ -30,6 +56,7 @@ export const getNetwork = (id: NetworkID) => {
   if (id === 's-tn') return snapshotTestnetNetwork;
   if (id === 'matic') return polygonNetwork;
   if (id === 'arb1') return arbitrumNetwork;
+  if (id === 'oeth') return optimismNetwork;
   if (id === 'eth') return ethereumNetwork;
   if (id === 'gor') return goerliNetwork;
   if (id === 'sep') return sepoliaNetwork;
@@ -37,6 +64,8 @@ export const getNetwork = (id: NetworkID) => {
   if (id === 'sn') return starknetNetwork;
   if (id === 'sn-tn') return starknetTestnetNetwork;
   if (id === 'sn-sep') return starknetSepoliaNetwork;
+  if (id === 'skale-testnet') return skaleTestnetNetwork;
+  if (id === 'skale-mainnet') return skaleMainnetNetwork;
 
   throw new Error(`Unknown network ${id}`);
 };
@@ -47,6 +76,10 @@ export const getReadWriteNetwork = (id: NetworkID): ReadWriteNetwork => {
 
   return network;
 };
+
+export const enabledReadWriteNetworks: NetworkID[] = enabledNetworks.filter(
+  id => !getNetwork(id).readOnly
+);
 
 /**
  * supportsNullCurrent return true if the network supports null current to be used for computing current voting power

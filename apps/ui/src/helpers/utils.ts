@@ -4,6 +4,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 import duration from 'dayjs/plugin/duration';
 import sha3 from 'js-sha3';
 import { sanitizeUrl as baseSanitizeUrl } from '@braintree/sanitize-url';
+import { getAddress } from '@ethersproject/address';
 import { validateAndParseAddress } from 'starknet';
 import networks from '@/helpers/networks.json';
 import pkg from '@/../package.json';
@@ -80,7 +81,9 @@ export function sanitizeUrl(url: string): string | null {
 }
 
 export function shortenAddress(str = '') {
-  return `${str.slice(0, 6)}...${str.slice(str.length - 4)}`;
+  const formatted = formatAddress(str);
+
+  return `${formatted.slice(0, 6)}...${formatted.slice(formatted.length - 4)}`;
 }
 
 export function shorten(str: string, key?: number | 'symbol' | 'name' | 'choice'): string {
@@ -94,6 +97,15 @@ export function shorten(str: string, key?: number | 'symbol' | 'name' | 'choice'
   return shortenAddress(str);
 }
 
+export function formatAddress(address: string) {
+  if (address.length === 42) return getAddress(address);
+  try {
+    return validateAndParseAddress(address);
+  } catch {
+    return address;
+  }
+}
+
 export function explorerUrl(network, str: string, type = 'address'): string {
   if (network === 'starknet') type = 'contract';
   return `${networks[network].explorer}/${type}/${str}`;
@@ -102,16 +114,31 @@ export function explorerUrl(network, str: string, type = 'address'): string {
 export function getProposalId(proposal: Proposal) {
   const proposalId = proposal.proposal_id.toString();
 
-  if (proposalId.startsWith('0x')) return `#${proposalId.slice(2, 7)}`;
+  if (proposalId.startsWith('0x')) {
+    return `#${proposalId.slice(2, 7)}`;
+  }
+
+  if ([46, 59].includes(proposalId.length)) {
+    return `#${proposalId.slice(-5)}`;
+  }
+
   return `#${proposalId}`;
 }
 
 export function _n(
   value: any,
   notation: 'standard' | 'compact' = 'standard',
-  { maximumFractionDigits }: { maximumFractionDigits?: number } = {}
+  {
+    maximumFractionDigits,
+    formatDust = false
+  }: { maximumFractionDigits?: number; formatDust?: boolean } = {}
 ) {
-  const formatter = new Intl.NumberFormat('en', { notation, maximumFractionDigits });
+  if (formatDust && value > 0 && value < 0.01) return '~0';
+
+  const formatter = new Intl.NumberFormat('en', {
+    notation,
+    maximumFractionDigits
+  });
   return formatter.format(value).toLowerCase();
 }
 
@@ -301,11 +328,6 @@ export function createErc1155Metadata(
   metadata: SpaceMetadata,
   extraProperties?: Record<string, any>
 ) {
-  const wallets: string[] = [];
-  if (metadata.walletNetwork && metadata.walletAddress) {
-    wallets.push(`${metadata.walletNetwork}:${metadata.walletAddress}`);
-  }
-
   return {
     name: metadata.name,
     avatar: metadata.avatar,
@@ -317,7 +339,11 @@ export function createErc1155Metadata(
       github: metadata.github,
       twitter: metadata.twitter,
       discord: metadata.discord,
-      wallets,
+      treasuries: metadata.treasuries.map(treasury => ({
+        name: treasury.name,
+        network: treasury.network,
+        address: treasury.address
+      })),
       delegations: metadata.delegations.map(delegation => ({
         name: delegation.name,
         api_type: delegation.apiType,
@@ -353,8 +379,15 @@ export function getStampUrl(
   type: 'avatar' | 'space' | 'space-sx' | 'space-cover-sx' | 'token',
   id: string,
   size: number | { width: number; height: number },
-  hash?: string
+  hash?: string,
+  ipfs?: string,
+  cb?: string
 ) {
+  if (ipfs) {
+    return getUrl(ipfs) || '';
+  } else {
+    console.log({ cb });
+  }
   let sizeParam = '';
   if (typeof size === 'number') {
     sizeParam = `?s=${size * 2}`;
@@ -364,7 +397,11 @@ export function getStampUrl(
 
   const cacheParam = hash ? `&cb=${hash}` : '';
 
-  return `https://cdn.stamp.fyi/${type}/${id}${sizeParam}${cacheParam}`;
+  const formattedId = ['avatar', 'space-sx', 'space-cover-sx'].includes(type)
+    ? formatAddress(id)
+    : id;
+
+  return `https://cdn.stamp.fyi/${type}/${formattedId}${sizeParam}${cacheParam}`;
 }
 
 export async function imageUpload(file: File) {
@@ -387,4 +424,31 @@ export async function imageUpload(file: File) {
 export function simplifyURL(fullURL: string): string {
   const url = new URL(fullURL);
   return `${url.hostname}${url.pathname.replace(/\/$/, '')}`;
+}
+
+export function getChoiceWeight(selectedChoices: Record<string, number>, index: number) {
+  const whole = Object.values(selectedChoices).reduce((a, b) => a + b, 0);
+  const percent = selectedChoices[index + 1] / whole;
+
+  return isNaN(percent) ? 0 : percent;
+}
+
+export function getChoiceText(
+  availableChoices: string[],
+  choice: number | number[] | Record<string, number>
+) {
+  if (typeof choice === 'number') {
+    return availableChoices[choice - 1];
+  }
+
+  if (Array.isArray(choice)) {
+    return choice.map(index => availableChoices[index - 1]).join(', ');
+  }
+
+  const total = Object.values(choice).reduce((acc, weight) => acc + weight, 0);
+
+  return Object.entries(choice)
+    .filter(([, weight]) => weight > 0)
+    .map(([index, weight]) => `${_p(weight / total)} for ${availableChoices[Number(index) - 1]}`)
+    .join(', ');
 }

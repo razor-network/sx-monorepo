@@ -1,3 +1,5 @@
+import { Connector } from '../types';
+
 export const AUTHS = {};
 export const PROPOSAL_VALIDATIONS = {
   any: 'Any',
@@ -9,6 +11,7 @@ export const PROPOSAL_VALIDATIONS = {
 };
 export const STRATEGIES = {};
 export const EXECUTORS = {};
+export const CONNECTORS: Connector[] = ['injected', 'walletconnect'];
 export const EDITOR_AUTHENTICATORS = [];
 export const EDITOR_PROPOSAL_VALIDATIONS = [];
 export const EDITOR_VOTING_STRATEGIES = [];
@@ -16,6 +19,13 @@ export const EDITOR_PROPOSAL_VALIDATION_VOTING_STRATEGIES = [];
 export const EDITOR_EXECUTION_STRATEGIES = [];
 export const EDITOR_SNAPSHOT_OFFSET = 4;
 export const EDITOR_APP_NAME = 'snapshot-v2';
-export const EDITOR_VOTING_TYPES = ['basic', 'single-choice', 'approval'];
+export const EDITOR_VOTING_TYPES = [
+  'basic',
+  'single-choice',
+  'approval',
+  'ranked-choice',
+  'weighted',
+  'quadratic'
+];
 
 export const DEFAULT_VOTING_DELAY = 60 * 60 * 24 * 7;

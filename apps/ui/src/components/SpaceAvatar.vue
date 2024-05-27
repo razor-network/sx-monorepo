@@ -22,5 +22,6 @@ const cb = computed(() => getCacheHash(props.space.avatar));
     :size="size"
     :cb="cb"
     :type="offchainNetworks.includes(space.network) ? 'space' : 'space-sx'"
+    :ipfs="props.space.avatar"
   />
 </template>

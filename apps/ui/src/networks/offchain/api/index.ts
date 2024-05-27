@@ -4,15 +4,31 @@ import {
   SPACE_QUERY,
   PROPOSALS_QUERY,
   PROPOSAL_QUERY,
+  USER_VOTES_QUERY,
+  USER_FOLLOWS_QUERY,
   VOTES_QUERY
 } from './queries';
 import { PaginationOpts, SpacesFilter, NetworkApi } from '@/networks/types';
 import { getNames } from '@/helpers/stamp';
-import { Space, Proposal, Vote, User, NetworkID, ProposalState } from '@/types';
+import { CHAIN_IDS } from '@/helpers/constants';
+import {
+  Space,
+  Proposal,
+  Vote,
+  User,
+  NetworkID,
+  ProposalState,
+  SpaceMetadataTreasury,
+  Follow
+} from '@/types';
 import { ApiSpace, ApiProposal, ApiVote } from './types';
 import { DEFAULT_VOTING_DELAY } from '../constants';
 
 const DEFAULT_AUTHENTICATOR = 'OffchainAuthenticator';
+
+const TREASURY_NETWORKS = new Map(
+  Object.entries(CHAIN_IDS).map(([networkId, chainId]) => [chainId, networkId as NetworkID])
+);
 
 function getProposalState(proposal: ApiProposal): ProposalState {
   if (proposal.state === 'closed') {
@@ -26,9 +42,16 @@ function getProposalState(proposal: ApiProposal): ProposalState {
 }
 
 function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
-  // TODO: convert ChainID to ShortName, we might need external mapping to handle
-  // all of those - or just have simple map with limited support
-  const wallet = space.treasuries[0] ? `eth:${space.treasuries[0].address}` : '';
+  const treasuries = space.treasuries
+    .map(treasury => {
+      return {
+        name: treasury.name,
+        network: TREASURY_NETWORKS.get(parseInt(treasury.network, 10)),
+        address: treasury.address
+      };
+    })
+    .filter(treasury => !!treasury.network) as SpaceMetadataTreasury[];
+
   let validationName = space.validation.name;
   const validationParams = space.validation.params || {};
   if (space.validation.name === 'basic') {
@@ -43,8 +66,10 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
 
   return {
     id: space.id,
-    controller: space.admins[0] ?? '',
     network: networkId,
+    verified: space.verified,
+    turbo: space.turbo,
+    controller: '',
     snapshot_chain_id: parseInt(space.network),
     name: space.name,
     avatar: '',
@@ -54,14 +79,16 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
     github: space.github,
     twitter: space.twitter,
     discord: '',
+    coingecko: space.coingecko,
     proposal_count: space.proposalsCount,
     vote_count: space.votesCount,
+    follower_count: space.followersCount,
     voting_power_symbol: space.symbol,
     voting_delay: space.voting.delay ?? 0,
     min_voting_period: space.voting.period ?? DEFAULT_VOTING_DELAY,
     max_voting_period: space.voting.period ?? 0,
     proposal_threshold: '1',
-    wallet,
+    treasuries,
     delegations: space.delegationPortal
       ? [
           {
@@ -78,6 +105,7 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
     authenticators: [DEFAULT_AUTHENTICATOR],
     executors: [],
     executors_types: [],
+    executors_strategies: [],
     strategies: space.strategies.map(strategy => strategy.name),
     strategies_indicies: [],
     strategies_params: space.strategies.map(strategy => strategy),
@@ -110,6 +138,7 @@ function formatProposal(proposal: ApiProposal, networkId: NetworkID): Proposal {
     max_end: proposal.end,
     snapshot: proposal.snapshot,
     quorum: proposal.quorum,
+    quorum_type: proposal.quorumType,
     choices: proposal.choices,
     scores: proposal.scores,
     scores_total: proposal.scores_total,
@@ -123,7 +152,9 @@ function formatProposal(proposal: ApiProposal, networkId: NetworkID): Proposal {
       name: proposal.space.name,
       snapshot_chain_id: parseInt(proposal.space.network),
       avatar: '',
-      controller: proposal.space.admins[0] ?? '',
+      controller: '',
+      admins: proposal.space.admins,
+      moderators: proposal.space.moderators,
       voting_power_symbol: proposal.space.symbol,
       authenticators: [DEFAULT_AUTHENTICATOR],
       executors: [],
@@ -131,6 +162,7 @@ function formatProposal(proposal: ApiProposal, networkId: NetworkID): Proposal {
       strategies_parsed_metadata: []
     },
     // NOTE: ignored
+    execution_ready: false,
     execution: [],
     execution_hash: '',
     execution_time: 0,
@@ -143,7 +175,8 @@ function formatProposal(proposal: ApiProposal, networkId: NetworkID): Proposal {
     tx: '',
     execution_tx: null,
     veto_tx: null,
-    has_execution_window_opened: false
+    has_execution_window_opened: false,
+    privacy: proposal.privacy
   };
 }
 
@@ -157,8 +190,7 @@ function formatVote(vote: ApiVote): Vote {
       id: vote.space.id
     },
     proposal: vote.proposal.id,
-    // TODO: handle multiple choices
-    choice: Array.isArray(vote.choice) ? vote.choice[0] : vote.choice,
+    choice: vote.choice,
     vp: vote.vp,
     created: vote.created,
     tx: vote.ipfs
@@ -223,11 +255,21 @@ export function createApi(uri: string, networkId: NetworkID): NetworkApi {
         return formattedVote;
       });
     },
-    loadUserVotes: async (): Promise<{ [key: string]: Vote }> => {
-      return {};
+    loadUserVotes: async (spaceIds: string[], voter: string): Promise<{ [key: string]: Vote }> => {
+      const { data } = await apollo.query({
+        query: USER_VOTES_QUERY,
+        variables: {
+          spaceIds,
+          voter
+        }
+      });
+
+      return Object.fromEntries(
+        data.votes.map(vote => [`${networkId}:${vote.proposal.id}`, formatVote(vote)])
+      );
     },
     loadProposals: async (
-      spaceId: string,
+      spaceIds: string[],
       { limit, skip = 0 }: PaginationOpts,
       current: number,
       filter: 'any' | 'active' | 'pending' | 'closed' = 'any',
@@ -249,7 +291,7 @@ export function createApi(uri: string, networkId: NetworkID): NetworkApi {
           first: limit,
           skip,
           where: {
-            space: spaceId,
+            space_in: spaceIds,
             title_contains: searchQuery,
             flagged: false,
             ...filters
@@ -305,6 +347,20 @@ export function createApi(uri: string, networkId: NetworkID): NetworkApi {
         vote_count: 0,
         created: 0
       };
+    },
+    loadFollows: async (userId?: string, spaceId?: string): Promise<Follow[]> => {
+      const {
+        data: { follows }
+      }: { data: { follows: Follow[] } } = await apollo.query({
+        query: USER_FOLLOWS_QUERY,
+        variables: {
+          first: 25,
+          follower: userId,
+          space: spaceId
+        }
+      });
+
+      return follows;
     }
   };
 }

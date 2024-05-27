@@ -16,6 +16,8 @@ import IHUserCircle from '~icons/heroicons-outline/user-circle';
 import IHLightningBolt from '~icons/heroicons-outline/lightning-bolt';
 import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
+export const MAX_MERKLE_VOTING_STRATEGIES = 100;
+
 export function createConstants(networkId: NetworkID) {
   const config = evmNetworks[networkId];
   if (!config) throw new Error(`Unsupported network ${networkId}`);
@@ -33,12 +35,16 @@ export function createConstants(networkId: NetworkID) {
     [config.Strategies.Vanilla]: true,
     [config.Strategies.Comp]: true,
     [config.Strategies.OZVotes]: true,
-    [config.Strategies.Whitelist]: true
+    [config.Strategies.Whitelist]: true,
+    [config.Strategies.MerkleVoting]: true
   };
 
   const SUPPORTED_EXECUTORS = {
     SimpleQuorumAvatar: true,
-    SimpleQuorumTimelock: true
+    SimpleQuorumTimelock: true,
+    Axiom: true,
+    Isokratia: true,
+    SimpleQuorumVanilla: true
   };
 
   const RELAYER_AUTHENTICATORS = {
@@ -51,19 +57,25 @@ export function createConstants(networkId: NetworkID) {
   };
 
   const PROPOSAL_VALIDATIONS = {
-    [config.ProposalValidations.VotingPower]: 'Voting power'
+    [config.ProposalValidations.VotingPower]: 'Voting power',
+    [config.ProposalValidations.WhitelistAndActiveProposals]: 'Whitelist and active proposals'
   };
 
   const STRATEGIES = {
     [config.Strategies.Vanilla]: 'Vanilla',
     [config.Strategies.Comp]: 'ERC-20 Votes (EIP-5805)',
     [config.Strategies.OZVotes]: 'ERC-20 Votes Comp (EIP-5805)',
-    [config.Strategies.Whitelist]: 'Merkle whitelist'
+    [config.Strategies.Whitelist]: 'Merkle whitelist',
+    [config.Strategies.MerkleVoting]: 'Merkle voting'
   };
 
   const EXECUTORS = {
     SimpleQuorumAvatar: 'Safe module (Zodiac)',
-    SimpleQuorumTimelock: 'Timelock'
+    SimpleQuorumTimelock: 'Timelock',
+    Axiom: 'Axiom',
+    Isokratia: 'Isokratia',
+    VanillaExecutionStrategy: 'Vanilla execution strategy',
+    SimpleQuorumVanilla: 'Simple quorum'
   };
 
   const EDITOR_AUTHENTICATORS = [
@@ -87,7 +99,7 @@ export function createConstants(networkId: NetworkID) {
 
   const EDITOR_PROPOSAL_VALIDATIONS = [
     {
-      address: config.ProposalValidations.VotingPower,
+      address: config.ProposalValidations.WhitelistAndActiveProposalsLimiter,
       type: 'VotingPower',
       name: 'Voting power',
       icon: IHLightningBolt,
@@ -149,6 +161,55 @@ export function createConstants(networkId: NetworkID) {
         }
       }
     }
+    // {
+    //   address: config.ProposalValidations.WhitelistAndActiveProposalsLimiter,
+    //   type: 'WhitelistAndActiveProposals',
+    //   name: 'Whitelist and active proposals',
+    //   icon: IHLightningBolt,
+    //   validate: (params: Record<string, any>) => {
+    //     return params?.strategies?.length > 0;
+    //   },
+    //   generateSummary: (params: Record<string, any>) => `(${params.threshold})`,
+    //   generateParams: (params: Record<string, any>) => {
+    //     const abiCoder = new AbiCoder();
+
+    //     const strategies = params.strategies.map((strategy: StrategyConfig) => {
+    //       console.log('generateParams called');
+    //       console.log(strategy);
+    //       return {
+    //         addr: strategy.address,
+    //         params: strategy.generateParams ? strategy.generateParams(strategy.params)[0] : '0x00'
+    //       };
+    //     });
+
+    //     return [
+    //       abiCoder.encode(
+    //         ['uint256', 'tuple(address addr, bytes params)[]'],
+    //         [params.threshold, strategies]
+    //       )
+    //     ];
+    //   },
+    //   parseParams: async (params: string) => {
+    //     const abiCoder = new AbiCoder();
+
+    //     return {
+    //       threshold: abiCoder.decode(['uint256', 'tuple(address addr, bytes params)[]'], params)[0]
+    //     };
+    //   },
+    //   paramsDefinition: {
+    //     type: 'object',
+    //     title: 'Params',
+    //     additionalProperties: false,
+    //     required: ['threshold'],
+    //     properties: {
+    //       threshold: {
+    //         type: 'integer',
+    //         title: 'Proposal threshold',
+    //         examples: ['1']
+    //       }
+    //     }
+    //   }
+    // }
   ];
 
   const EDITOR_VOTING_STRATEGIES = [
@@ -169,6 +230,43 @@ export function createConstants(networkId: NetworkID) {
         if (!metadata) throw new Error('Missing metadata');
 
         return {
+          symbol: metadata.symbol
+        };
+      },
+      paramsDefinition: {
+        type: 'object',
+        title: 'Params',
+        additionalProperties: false,
+        required: [],
+        properties: {
+          symbol: {
+            type: 'string',
+            maxLength: MAX_SYMBOL_LENGTH,
+            title: 'Symbol',
+            examples: ['e.g. VP']
+          }
+        }
+      }
+    },
+    {
+      address: config.Strategies.MerkleVoting,
+      name: 'Custom Merkle Voting',
+      about:
+        'Calculate scores based on a Merkle tree of votes. The tree is generated off-chain and the root is stored on-chain.',
+      icon: IHBeaker,
+      generateMetadata: async (params: Record<string, any>) => ({
+        name: 'MerkleVoting',
+        properties: {
+          symbol: params.symbol,
+          decimals: 18
+        }
+      }),
+      parseParams: async (params: string, metadata: StrategyParsedMetadata | null) => {
+        if (!metadata) throw new Error('Missing metadata');
+
+        return {
+          // proposalIndex: metadata.symbol,
+          decimals: 18,
           symbol: metadata.symbol
         };
       },
@@ -374,6 +472,44 @@ export function createConstants(networkId: NetworkID) {
         }
       }
     }
+    // {
+    //   address: config.Strategies.MerkleVoting,
+    //   name: 'Merkle Voting',
+    //   about:
+    //     'Calculate scores based on a Merkle tree of votes. The tree is generated off-chain and the root is stored on-chain.',
+    //   icon: IHCode,
+    //   // generateSummary: (params: Record<string, any>) =>
+    //   //   `(${shorten(params.contractAddress)}, ${params.decimals})`,
+    //   generateParams: (params: Record<string, any>) => [params.contractAddress],
+    //   generateMetadata: async (params: Record<string, any>) => ({
+    //     name: 'Merkle Voting',
+    //     properties: {
+    //       symbol: params.symbol,
+    //       decimals: 0
+    //     }
+    //   }),
+    //   parseParams: async (params: string, metadata: StrategyParsedMetadata | null) => {
+    //     if (!metadata) throw new Error('Missing metadata');
+
+    //     return {
+    //       symbol: metadata.symbol
+    //     };
+    //   },
+    //   paramsDefinition: {
+    //     type: 'object',
+    //     title: 'Params',
+    //     additionalProperties: false,
+    //     required: [],
+    //     properties: {
+    //       symbol: {
+    //         type: 'string',
+    //         maxLength: MAX_SYMBOL_LENGTH,
+    //         title: 'Symbol',
+    //         examples: ['e.g. VP']
+    //       }
+    //     }
+    //   }
+    // }
   ];
 
   const EDITOR_PROPOSAL_VALIDATION_VOTING_STRATEGIES = EDITOR_VOTING_STRATEGIES;
@@ -433,6 +569,50 @@ export function createConstants(networkId: NetworkID) {
     },
     {
       address: '',
+      type: 'SimpleQuorumVanilla',
+      name: EXECUTORS.VanillaExecutionStrategy,
+      about:
+        'This is a vanilla execution strategy that allows proposals to execute transactions from a specified target contract.',
+      icon: IHClock,
+      generateSummary: (params: Record<string, any>) => `(${params.quorum}, ${params.owner})`,
+      deploy: async (
+        client: clients.EvmEthereumTx,
+        signer: Signer,
+        controller: string,
+        spaceAddress: string,
+        params: Record<string, any>
+      ): Promise<{ address: string; txId: string }> => {
+        console.log({ quorum: params.quorum });
+        return client.deployVanillaExecution({
+          signer,
+          params: {
+            owner: params.owner,
+            quorum: BigInt(params.quorum)
+          }
+        });
+      },
+      paramsDefinition: {
+        type: 'object',
+        title: 'Params',
+        additionalProperties: false,
+        required: ['owner', 'quorum'],
+        properties: {
+          owner: {
+            type: 'string',
+            format: 'address',
+            title: 'Owner address',
+            examples: ['0x0000…']
+          },
+          quorum: {
+            type: 'integer',
+            title: 'Quorum',
+            examples: ['1']
+          }
+        }
+      }
+    },
+    {
+      address: '',
       type: 'SimpleQuorumTimelock',
       name: EXECUTORS.SimpleQuorumTimelock,
       about:
@@ -485,6 +665,134 @@ export function createConstants(networkId: NetworkID) {
             type: 'integer',
             format: 'duration',
             title: 'Timelock delay'
+          }
+        }
+      }
+    },
+    {
+      address: '',
+      type: 'Axiom',
+      name: EXECUTORS.Axiom,
+      about:
+        'This strategy enables offchain votes on the space. The validity of votes and voting power is verified onchain in bulk using a zkSNARK of storage proofs, which then triggers the execution of transactions.',
+      icon: IHCode,
+      generateSummary: (params: Record<string, any>) =>
+        `(${shorten(params.contractAddress)}, ${params.slotIndex})`,
+      deploy: async (
+        client: clients.EvmEthereumTx,
+        signer: Signer,
+        _controller: string,
+        spaceAddress: string,
+        params: Record<string, any>
+      ): Promise<{ address: string; txId: string }> => {
+        return client.deployAxiomExecution({
+          signer,
+          params: {
+            controller: params.controller || '0x0000000000000000000000000000000000000000',
+            quorum: BigInt(params.quorum),
+            contractAddress: params.contractAddress || '0x0000000000000000000000000000000000000000',
+            slotIndex: BigInt(params.slotIndex),
+            space: spaceAddress,
+            querySchema: '0xa09cc16ccaa32b96ca5c404c1b4be60d7883a7178f432e8f9f3c22157fc0f873'
+          }
+        });
+      },
+      paramsDefinition: {
+        type: 'object',
+        title: 'Params',
+        additionalProperties: false,
+        required: ['controller', 'quorum', 'contractAddress', 'slotIndex'],
+        properties: {
+          controller: {
+            type: 'string',
+            format: 'address',
+            title: 'Controller address',
+            examples: ['0x0000…']
+          },
+          quorum: {
+            type: 'integer',
+            title: 'Quorum',
+            examples: ['1']
+          },
+          contractAddress: {
+            type: 'string',
+            format: 'address',
+            title: 'Contract address',
+            examples: ['0x0000…']
+          },
+          slotIndex: {
+            type: 'integer',
+            title: 'Slot index',
+            examples: ['0']
+          }
+        }
+      }
+    },
+    {
+      address: '',
+      type: 'Isokratia',
+      name: EXECUTORS.Isokratia,
+      about:
+        'This strategy enables offchain votes on the space. The validity of votes is verified onchain in bulk using a zkSNARK, which then triggers the execution of transactions.',
+      icon: IHCode,
+      generateSummary: (params: Record<string, any>) =>
+        `(${shorten(params.contractAddress)}, ${params.slotIndex})`,
+      deploy: async (
+        client: clients.EvmEthereumTx,
+        signer: Signer,
+        _controller: string,
+        _spaceAddress: string,
+        params: Record<string, any>
+      ): Promise<{ address: string; txId: string }> => {
+        return client.deployIsokratiaExecution({
+          signer,
+          params: {
+            provingTimeAllowance: params.provingTimeAllowance,
+            quorum: BigInt(params.quorum),
+            queryAddress: params.queryAddress || '0x0000000000000000000000000000000000000000',
+            contractAddress: params.contractAddress || '0x0000000000000000000000000000000000000000',
+            slotIndex: BigInt(params.slotIndex)
+          }
+        });
+      },
+      paramsDefinition: {
+        type: 'object',
+        title: 'Params',
+        additionalProperties: false,
+        required: [
+          'provingTimeAllowance',
+          'quorum',
+          'queryAddress',
+          'contractAddress',
+          'slotIndex'
+        ],
+        properties: {
+          provingTimeAllowance: {
+            type: 'integer',
+            title: 'Proving time allowance',
+            examples: ['3600']
+          },
+          quorum: {
+            type: 'integer',
+            title: 'Quorum',
+            examples: ['1']
+          },
+          queryAddress: {
+            type: 'string',
+            format: 'address',
+            title: 'Query address',
+            examples: ['0x0000…']
+          },
+          contractAddress: {
+            type: 'string',
+            format: 'address',
+            title: 'Contract address',
+            examples: ['0x0000…']
+          },
+          slotIndex: {
+            type: 'integer',
+            title: 'Slot index',
+            examples: ['0']
           }
         }
       }

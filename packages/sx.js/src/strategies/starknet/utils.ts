@@ -7,13 +7,17 @@ export function getSlotKey(voterAddress: string, slotIndex: number) {
   );
 }
 
+export function getNestedSlotKey(previous: string, index: number) {
+  return `0x${(BigInt(keccak256(`${previous}`)) + BigInt(index)).toString(16)}`;
+}
+
 export async function getBinaryTree(
   deployedOnChain: string,
   snapshotTimestamp: number,
   chainId: number
 ) {
   const res = await fetch(
-    `https://ds-indexer.api.herodotus.cloud/binsearch-path?timestamp=${snapshotTimestamp}&deployed_on_chain=${deployedOnChain}&accumulates_chain=${chainId}`,
+    `https://rs-indexer.api.herodotus.cloud/remappers/binsearch-path?timestamp=${snapshotTimestamp}&deployed_on_chain=${deployedOnChain}&accumulates_chain=${chainId}`,
     {
       headers: {
         accept: 'application/json'

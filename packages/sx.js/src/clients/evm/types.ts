@@ -30,6 +30,9 @@ export type Propose = {
   strategies: StrategyConfig[];
   executionStrategy: AddressConfig;
   metadataUri: string;
+  proposal?: number;
+  root: string;
+  snapshotBlock: number;
 };
 
 export type UpdateProposal = {
@@ -78,7 +81,8 @@ export type Strategy = {
     metadata: Record<string, any> | null,
     block: number,
     params: string,
-    provider: Provider
+    provider: Provider,
+    proposalId: number
   ): Promise<bigint>;
 };
 

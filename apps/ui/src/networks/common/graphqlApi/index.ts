@@ -23,7 +23,16 @@ import {
 import { PaginationOpts, SpacesFilter, NetworkApi } from '@/networks/types';
 import { getNames } from '@/helpers/stamp';
 import { BASIC_CHOICES } from '@/helpers/constants';
-import { Space, Proposal, Vote, User, Transaction, NetworkID, ProposalState } from '@/types';
+import {
+  Space,
+  Proposal,
+  Vote,
+  User,
+  Transaction,
+  NetworkID,
+  ProposalState,
+  Follow
+} from '@/types';
 import { ApiSpace, ApiProposal, ApiStrategyParsedMetadata } from './types';
 
 type ApiOptions = {
@@ -33,8 +42,8 @@ type ApiOptions = {
 function getProposalState(proposal: ApiProposal, current: number): ProposalState {
   if (proposal.executed) return 'executed';
   if (proposal.max_end <= current) {
-    if (proposal.scores_total < proposal.quorum) return 'rejected';
-    return proposal.scores_1 > proposal.scores_2 ? 'passed' : 'rejected';
+    if (BigInt(proposal.scores_total) < BigInt(proposal.quorum)) return 'rejected';
+    return BigInt(proposal.scores_1) > BigInt(proposal.scores_2) ? 'passed' : 'rejected';
   }
   if (proposal.start > current) return 'pending';
 
@@ -84,6 +93,8 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
   return {
     ...space,
     network: networkId,
+    verified: false,
+    turbo: false,
     name: space.metadata.name,
     avatar: space.metadata.avatar,
     cover: space.metadata.cover,
@@ -93,7 +104,15 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
     twitter: space.metadata.twitter,
     discord: space.metadata.discord,
     voting_power_symbol: space.metadata.voting_power_symbol,
-    wallet: space.metadata.wallet,
+    treasuries: space.metadata.treasuries.map(treasury => {
+      const { name, network, address } = JSON.parse(treasury);
+
+      return {
+        name,
+        network,
+        address
+      };
+    }),
     delegations: space.metadata.delegations.map(delegation => {
       const { name, api_type, api_url, contract } = JSON.parse(delegation);
 
@@ -109,6 +128,7 @@ function formatSpace(space: ApiSpace, networkId: NetworkID): Space {
     }),
     executors: space.metadata.executors,
     executors_types: space.metadata.executors_types,
+    executors_strategies: space.metadata.executors_strategies,
     voting_power_validation_strategies_parsed_metadata: processStrategiesMetadata(
       space.voting_power_validation_strategies_parsed_metadata
     ),
@@ -144,9 +164,14 @@ function formatProposal(proposal: ApiProposal, networkId: NetworkID, current: nu
     body: proposal.metadata.body,
     discussion: proposal.metadata.discussion,
     execution: formatExecution(proposal.metadata.execution),
-    has_execution_window_opened: proposal.min_end <= current,
+    has_execution_window_opened:
+      proposal.execution_strategy_type === 'Axiom'
+        ? proposal.max_end <= current
+        : proposal.min_end <= current,
     state: getProposalState(proposal, current),
-    network: networkId
+    network: networkId,
+    privacy: null,
+    quorum: +proposal.quorum
   };
 }
 
@@ -257,11 +282,12 @@ export function createApi(uri: string, networkId: NetworkID, opts: ApiOptions = 
         return vote;
       });
     },
-    loadUserVotes: async (voter: string): Promise<{ [key: string]: Vote }> => {
+    loadUserVotes: async (spaceIds: string[], voter: string): Promise<{ [key: string]: Vote }> => {
       const { data } = await apollo.query({
         query: USER_VOTES_QUERY,
         variables: {
-          voter: voter.toLowerCase()
+          spaceIds,
+          voter
         }
       });
 
@@ -270,7 +296,7 @@ export function createApi(uri: string, networkId: NetworkID, opts: ApiOptions = 
       );
     },
     loadProposals: async (
-      spaceId: string,
+      spaceIds: string[],
       { limit, skip = 0 }: PaginationOpts,
       current: number,
       filter: 'any' | 'active' | 'pending' | 'closed' = 'any',
@@ -292,7 +318,7 @@ export function createApi(uri: string, networkId: NetworkID, opts: ApiOptions = 
           first: limit,
           skip,
           where: {
-            space: spaceId,
+            space_in: spaceIds,
             cancelled: false,
             metadata_: { title_contains_nocase: searchQuery },
             ...filters
@@ -406,6 +432,9 @@ export function createApi(uri: string, networkId: NetworkID, opts: ApiOptions = 
       ]);
 
       return joinHighlightUser(data.user ?? null, highlightResult?.data?.sxuser ?? null);
+    },
+    loadFollows: async () => {
+      return [] as Follow[];
     }
   };
 }
