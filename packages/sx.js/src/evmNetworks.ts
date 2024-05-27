@@ -30,7 +30,7 @@ function createStandardConfig(
       Comp: '0xc3482b52fE3B21caE9A34BF17E5808aC96319985',
       OZVotes: '0x5b30b72f79B88f737cfc7B7e6afba8F33C8D5f2c',
       Whitelist: '0xCE1cD69dA94974BcD6439489727E2471DD91BC32',
-      MerkleVoting: '0x76F31B102b2F80BE9E2B0611571c33C10147Ec29',
+      MerkleVoting: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95',
       ...additionalStrategies
     },
     ProposalValidations: {
@@ -159,6 +159,35 @@ export const evmNetworks = {
       Axiom: null,
       Isokratia: null
     }
+  },
+  'skale-testnet': {
+    Meta: {
+      eip712ChainId: 1444673419,
+      proxyFactory: '0x96f98916be07BCdB2556349b13D5F404B78E13D7',
+      masterSpace: '0xae55A5603ba260eb38a1567774395f3e1871707B'
+    },
+    Authenticators: {
+      EthSig: '0x0211a5e207fa0Fbbc17Fb6F297970e7a8E5d1c57',
+      EthTx: '0x4D2E0df9E26D034B6bA39DC983857e4bd18D4637'
+    },
+    Strategies: {
+      Vanilla: '0x697C27Edb2a52ef1E3B425C096f7F3e94685F969',
+      Comp: '0xF912b680B1FeB775913AD9A5BB2980e519E42D95',
+      OZVotes: '0x8B2759420d57f4A67208CE7FE08461Ae5695a723',
+      Whitelist: '0xD05365Bf55bfe95c9a7eF23798156580f9AB5231',
+      MerkleVoting: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95'
+    },
+    ProposalValidations: {
+      VotingPower: '0x690a8ac27242c7F0f3fA922ab5098E0b05f284c5',
+      WhitelistAndActiveProposalsLimiter: '0xB8EACf68daF6c5050fD2f3a02DFf1101F62F5bCc'
+    },
+    ExecutionStrategies: {
+      SimpleQuorumAvatar: '0x68F21c7fa715E9102C7476e3a08Ac896AFb9C3c9',
+      SimpleQuorumTimelock: '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4',
+      SimpleQuorumVanilla: '0x84CfB838FA4F868560f03eA633b1bDC6e958bf63',
+      Axiom: null,
+      Isokratia: null
+    }
   }
 } as const;
 
@@ -169,3 +198,4 @@ export const evmOptimism = createEvmConfig('oeth');
 export const evmPolygon = createEvmConfig('matic');
 export const evmArbitrum = createEvmConfig('arb1');
 export const evmLineaGoerli = createEvmConfig('linea-testnet');
+export const evmSkaleTestnet = createEvmConfig('skale-testnet');

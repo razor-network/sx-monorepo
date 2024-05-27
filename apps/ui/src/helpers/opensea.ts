@@ -25,7 +25,8 @@ const OPENSEA_CHAINS: Record<number, ChainItem> = {
   1: { name: 'ethereum', isTestnet: false },
   10: { name: 'optimism', isTestnet: false },
   137: { name: 'matic', isTestnet: false },
-  42161: { name: 'arbitrum', isTestnet: false }
+  42161: { name: 'arbitrum', isTestnet: false },
+  1444673419: { name: 'skale-testnet', isTestnet: true }
 };
 
 export async function getNfts(address: string, chainId: number): Promise<ApiNft[]> {

@@ -29,7 +29,7 @@ const routes: any[] = [
   {
     path: '/',
     name: 'landing',
-    redirect: '/sep:0x22fcfBE907139a3f970ad8B7A3FC4D0c1b698a98',
+    redirect: '/skale-testnet:0xbA0012E25e9D2f4b88a59e20086789d6458f6DF0',
     component: Landing
   },
   {

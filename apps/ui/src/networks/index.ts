@@ -16,10 +16,11 @@ const ethereumNetwork = createEvmNetwork('eth');
 const goerliNetwork = createEvmNetwork('gor');
 const sepoliaNetwork = createEvmNetwork('sep');
 const lineaTestnetNetwork = createEvmNetwork('linea-testnet');
+const skaleTestnetNetwork = createEvmNetwork('skale-testnet');
 
 export const enabledNetworks: NetworkID[] = import.meta.env.VITE_ENABLED_NETWORKS
   ? (import.meta.env.VITE_ENABLED_NETWORKS.split(',') as NetworkID[])
-  : ['s', 's-tn', 'eth', 'matic', 'arb1', 'oeth', 'gor', 'sep', 'sn', 'sn-sep'];
+  : ['s', 's-tn', 'eth', 'matic', 'arb1', 'oeth', 'gor', 'sep', 'skale-testnet', 'sn', 'sn-sep'];
 
 export const evmNetworks: NetworkID[] = [
   'eth',
@@ -28,7 +29,8 @@ export const evmNetworks: NetworkID[] = [
   'oeth',
   'gor',
   'sep',
-  'linea-testnet'
+  'linea-testnet',
+  'skale-testnet'
 ];
 export const offchainNetworks: NetworkID[] = ['s', 's-tn'];
 
@@ -47,6 +49,7 @@ export const getNetwork = (id: NetworkID) => {
   if (id === 'sn') return starknetNetwork;
   if (id === 'sn-tn') return starknetTestnetNetwork;
   if (id === 'sn-sep') return starknetSepoliaNetwork;
+  if (id === 'skale-testnet') return skaleTestnetNetwork;
 
   throw new Error(`Unknown network ${id}`);
 };
