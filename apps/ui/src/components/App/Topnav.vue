@@ -77,11 +77,11 @@ watch(route, to => {
         </div>
         <router-link
           v-else
-          :to="{ path: '/skale-testnet:0xbA0012E25e9D2f4b88a59e20086789d6458f6DF0' }"
+          :to="{ path: '/skale-mainnet:0x14Fd5d36a0E234C623A235756C1e2B9D9135a6b8' }"
           class="flex items-center"
           style="font-size: 24px"
         >
-          snapshot x
+          Razor Network Governance
         </router-link>
       </div>
       <div :key="web3.account" class="flex">

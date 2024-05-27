@@ -8,7 +8,7 @@ const spacesStore = useSpacesStore();
 <template>
   <div class="w-[72px] border-r fixed left-0 top-0 bottom-0 text-center">
     <router-link
-      :to="{ path: '/skale-testnet:0xbA0012E25e9D2f4b88a59e20086789d6458f6DF0' }"
+      :to="{ path: '/skale-mainnet:0x14Fd5d36a0E234C623A235756C1e2B9D9135a6b8' }"
       class="h-[72px] block"
     >
       <IH-stop class="inline-block my-4 w-[32px] h-[32px] text-skin-link" />
