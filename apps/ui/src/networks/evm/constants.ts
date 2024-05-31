@@ -17,6 +17,7 @@ import IHLightningBolt from '~icons/heroicons-outline/lightning-bolt';
 import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
 export const MAX_MERKLE_VOTING_STRATEGIES = 100;
+export const MERKLE_VOTING_STRATEGY_ADDRESS = '0x81321F01CE2CB74510A8B33f090c85887f51C402';
 
 export function createConstants(networkId: NetworkID) {
   const config = evmNetworks[networkId];

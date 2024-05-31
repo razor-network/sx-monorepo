@@ -47,7 +47,7 @@ import type {
 } from '@/types';
 import { getSwapLink } from '@/helpers/link';
 import { AbiCoder } from '@ethersproject/abi';
-import { MAX_MERKLE_VOTING_STRATEGIES } from './constants';
+import { MAX_MERKLE_VOTING_STRATEGIES, MERKLE_VOTING_STRATEGY_ADDRESS } from './constants';
 
 const CONFIGS: Record<number, EvmNetworkConfig> = {
   10: evmOptimism,
@@ -155,7 +155,7 @@ export function createActions(
           authenticators: params.authenticators.map(config => config.address),
           votingStrategies: Array.from({ length: MAX_MERKLE_VOTING_STRATEGIES }, (_, i) => {
             return {
-              addr: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95',
+              addr: MERKLE_VOTING_STRATEGY_ADDRESS,
               params: abiCoder.encode(['uint256'], [BigInt(i + 1)])
             };
           }),
