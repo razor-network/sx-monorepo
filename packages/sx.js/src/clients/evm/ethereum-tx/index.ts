@@ -480,8 +480,8 @@ export class EthereumTx {
 
     //! NOTE: This is a temporary solution to get the execution strategy
     const executionStrategy: AddressConfig = {
-      addr: '0x093758ba612D90f14Dd702Df9020435DC4Daf000',
-      params: abiCoder.encode(['address', 'uint256'], [signerAddress, '10000000000000000000000000'])
+      addr: '0x093758ba612D90f14Dd702Df9020435DC4Daf000', // !NOTE: hardcode change, update this execution strategy address deployed while space creation
+      params: abiCoder.encode(['address', 'uint256'], [signerAddress, '10000000000000000000000000']) // !NOTE: Update quorum
     };
 
     console.log({ executionStrategy });
