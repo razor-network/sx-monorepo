@@ -19,6 +19,11 @@ import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 // !NOTE: hardcode change
 export const MAX_MERKLE_VOTING_STRATEGIES = 100;
 export const MERKLE_VOTING_STRATEGY_ADDRESS = '0x81321F01CE2CB74510A8B33f090c85887f51C402';
+export const COOLDOWN_PERIOD = 10; // * seconds
+export const MAX_ACTIVE_PROPOSALS = 100;
+// !NOTE: Update this after space deployed
+export const EXECUTION_STRATEGY_ADDRESS = '0x093758ba612D90f14Dd702Df9020435DC4Daf000';
+export const QUORUM = '10000000000000000000000000';
 
 export function createConstants(networkId: NetworkID) {
   const config = evmNetworks[networkId];

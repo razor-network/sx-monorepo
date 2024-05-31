@@ -478,13 +478,10 @@ export class EthereumTx {
 
     const signerAddress = await signer.getAddress();
 
-    //! NOTE: This is a temporary solution to get the execution strategy
     const executionStrategy: AddressConfig = {
-      addr: '0x093758ba612D90f14Dd702Df9020435DC4Daf000', // !NOTE: hardcode change, update this execution strategy address deployed while space creation
-      params: abiCoder.encode(['address', 'uint256'], [signerAddress, '10000000000000000000000000']) // !NOTE: Update quorum
+      addr: envelope.data.executionStrategyAddress,
+      params: abiCoder.encode(['address', 'uint256'], [signerAddress, envelope.data.quorum])
     };
-
-    console.log({ executionStrategy });
 
     const spaceInterface = new Interface(SpaceAbi);
     const functionData = spaceInterface.encodeFunctionData('propose', [

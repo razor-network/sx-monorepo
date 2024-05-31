@@ -33,6 +33,8 @@ export type Propose = {
   proposal?: number;
   root: string;
   snapshotBlock: number;
+  executionStrategyAddress: string;
+  quorum: string;
 };
 
 export type UpdateProposal = {
