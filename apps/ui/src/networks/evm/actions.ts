@@ -47,7 +47,14 @@ import type {
 } from '@/types';
 import { getSwapLink } from '@/helpers/link';
 import { AbiCoder } from '@ethersproject/abi';
-import { MAX_MERKLE_VOTING_STRATEGIES, MERKLE_VOTING_STRATEGY_ADDRESS } from './constants';
+import {
+  COOLDOWN_PERIOD,
+  EXECUTION_STRATEGY_ADDRESS,
+  MAX_ACTIVE_PROPOSALS,
+  MAX_MERKLE_VOTING_STRATEGIES,
+  MERKLE_VOTING_STRATEGY_ADDRESS,
+  QUORUM
+} from './constants';
 
 const CONFIGS: Record<number, EvmNetworkConfig> = {
   10: evmOptimism,
@@ -164,7 +171,10 @@ export function createActions(
           }),
           proposalValidationStrategy: {
             addr: params.validationStrategy.address,
-            params: abiCoder.encode(['uint256', 'uint256'], [BigInt(10), BigInt(100)])
+            params: abiCoder.encode(
+              ['uint256', 'uint256'],
+              [BigInt(COOLDOWN_PERIOD), BigInt(MAX_ACTIVE_PROPOSALS)]
+            )
           },
           metadataUri: `ipfs://${pinned.cid}`,
           proposalValidationStrategyMetadataUri,
@@ -253,7 +263,9 @@ export function createActions(
         executionStrategy: selectedExecutionStrategy,
         metadataUri: `ipfs://${cid}`,
         root,
-        snapshotBlock
+        snapshotBlock,
+        executionStrategyAddress: EXECUTION_STRATEGY_ADDRESS,
+        quorum: QUORUM
       };
 
       if (relayerType === 'evm') {

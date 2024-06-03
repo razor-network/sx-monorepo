@@ -18,7 +18,14 @@ import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
 // !NOTE: hardcode change
 export const MAX_MERKLE_VOTING_STRATEGIES = 100;
-export const MERKLE_VOTING_STRATEGY_ADDRESS = '0x81321F01CE2CB74510A8B33f090c85887f51C402';
+export const MERKLE_VOTING_STRATEGY_ADDRESS = evmNetworks['skale-mainnet'].Strategies.MerkleVoting;
+export const COOLDOWN_PERIOD = 10; // * seconds
+export const MAX_ACTIVE_PROPOSALS = 100;
+// !NOTE: Update this after space deployed
+export const EXECUTION_STRATEGY_ADDRESS = '0x093758ba612D90f14Dd702Df9020435DC4Daf000';
+export const QUORUM = '10000000000000000000000000'; // * 10 million
+export const SPACE_ADDRESS = '0x14Fd5d36a0E234C623A235756C1e2B9D9135a6b8';
+export const REDIRECT_URL = `/skale-mainnet:${SPACE_ADDRESS}`;
 
 export function createConstants(networkId: NetworkID) {
   const config = evmNetworks[networkId];

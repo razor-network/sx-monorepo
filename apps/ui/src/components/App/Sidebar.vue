@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { REDIRECT_URL } from '@/networks/evm/constants';
 import draggable from 'vuedraggable';
 
 const uiStore = useUiStore();
@@ -7,11 +8,12 @@ const spacesStore = useSpacesStore();
 
 <template>
   <div class="w-[72px] border-r fixed left-0 top-0 bottom-0 text-center">
-    <router-link
-      :to="{ path: '/skale-mainnet:0x14Fd5d36a0E234C623A235756C1e2B9D9135a6b8' }"
-      class="h-[72px] block"
-    >
-      <IH-stop class="inline-block my-4 w-[32px] h-[32px] text-skin-link" />
+    <router-link :to="{ path: REDIRECT_URL }" class="h-[72px] block">
+      <img
+        src="https://ipfs.io/ipfs/QmRXoxMnz9ViWzQ7Ewg7dA8XtQoxp8gQ4cWjqj1Vk2ue2p/razor.png"
+        class="inline-block my-4 w-[32px] h-[32px] text-skin-link"
+      />
+      <!-- <IH-stop class="inline-block my-4 w-[32px] h-[32px] text-skin-link" /> -->
     </router-link>
     <UiLoading v-if="!spacesStore.starredSpacesLoaded" />
     <draggable
