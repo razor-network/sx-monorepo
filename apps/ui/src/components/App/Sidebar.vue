@@ -9,7 +9,11 @@ const spacesStore = useSpacesStore();
 <template>
   <div class="w-[72px] border-r fixed left-0 top-0 bottom-0 text-center">
     <router-link :to="{ path: REDIRECT_URL }" class="h-[72px] block">
-      <IH-stop class="inline-block my-4 w-[32px] h-[32px] text-skin-link" />
+      <img
+        src="https://ipfs.io/ipfs/QmRXoxMnz9ViWzQ7Ewg7dA8XtQoxp8gQ4cWjqj1Vk2ue2p/razor.png"
+        class="inline-block my-4 w-[32px] h-[32px] text-skin-link"
+      />
+      <!-- <IH-stop class="inline-block my-4 w-[32px] h-[32px] text-skin-link" /> -->
     </router-link>
     <UiLoading v-if="!spacesStore.starredSpacesLoaded" />
     <draggable
