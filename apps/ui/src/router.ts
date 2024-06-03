@@ -22,6 +22,7 @@ import Explore from '@/views/My/Explore.vue';
 import SettingsSpaces from '@/views/Settings/Spaces.vue';
 import Apps from '@/views/Apps.vue';
 import App from '@/views/App.vue';
+import { REDIRECT_URL } from './networks/evm/constants';
 
 const { mixpanel } = useMixpanel();
 
@@ -29,7 +30,7 @@ const routes: any[] = [
   {
     path: '/',
     name: 'landing',
-    redirect: '/skale-mainnet:0x14Fd5d36a0E234C623A235756C1e2B9D9135a6b8',
+    redirect: REDIRECT_URL,
     component: Landing
   },
   {

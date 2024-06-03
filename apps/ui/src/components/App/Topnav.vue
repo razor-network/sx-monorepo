@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
 import { shorten } from '@/helpers/utils';
+import { REDIRECT_URL } from '@/networks/evm/constants';
 
 const route = useRoute();
 const router = useRouter();
@@ -77,7 +78,7 @@ watch(route, to => {
         </div>
         <router-link
           v-else
-          :to="{ path: '/skale-mainnet:0x14Fd5d36a0E234C623A235756C1e2B9D9135a6b8' }"
+          :to="{ path: REDIRECT_URL }"
           class="flex items-center"
           style="font-size: 24px"
         >
