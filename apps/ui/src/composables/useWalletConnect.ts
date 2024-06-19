@@ -26,9 +26,9 @@ async function getConnector() {
       projectId: import.meta.env.VITE_WC_PROJECT_ID
     }),
     metadata: {
-      name: 'Snapshot X',
-      description: 'Snapshot X',
-      url: 'https://snapshotx.org/',
+      name: 'Razor Network Governance',
+      description: 'Razor Network Governance',
+      url: 'https://vote.razor.network/',
       icons: []
     }
   });
