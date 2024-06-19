@@ -62,7 +62,7 @@ const routes: any[] = [
     ]
   },
   { path: '/profile/:id', name: 'user', component: User },
-  { path: '/create', name: 'create', component: Create },
+  { path: '/create', name: 'create', redirect: REDIRECT_URL, component: Landing },
   {
     path: '/settings',
     name: 'settings',
