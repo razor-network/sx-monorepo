@@ -50,8 +50,8 @@ import {
   toChecksumAddress,
 } from './helpers'
 
-const MASTER_SPACE = Address.fromString('0xfEcEdAb2203C188B6C3902d29D28387B931591a2')
-const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0xc7c1b38988a0C7d2f7c7318216951a92A4cc4bC5')
+const MASTER_SPACE = Address.fromString('0xBa1aB5dDc31f90a5894A6dc35F9428C0B09e4b82')
+const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0xaaC64a4e6725DD05DEc3d4DEc05b7f6B1874c6ED')
 const MASTER_AXIOM = Address.fromString('0xaC6dbd42Ed254E9407fe0D2798784d0110979DC2')
 const MASTER_SIMPLE_QUORUM_TIMELOCK = Address.fromString(
   '0xeD352980Dc57f18FBC7afa9A78BCbD95c2f0af58'
@@ -67,6 +67,7 @@ CHAIN_IDS.set('arbitrum-one', 42161)
 CHAIN_IDS.set('linea-testnet', 59140)
 CHAIN_IDS.set('skale-testnet', 1444673419)
 CHAIN_IDS.set('skale-mainnet', 278611351)
+CHAIN_IDS.set('europa-mainnet', 2046399126)
 
 export function handleProxyDeployed(event: ProxyDeployed): void {
   let network = dataSource.network()
