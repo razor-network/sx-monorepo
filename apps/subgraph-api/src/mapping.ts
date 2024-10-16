@@ -50,8 +50,8 @@ import {
   toChecksumAddress,
 } from './helpers'
 
-const MASTER_SPACE = Address.fromString('0xBa1aB5dDc31f90a5894A6dc35F9428C0B09e4b82')
-const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0xaaC64a4e6725DD05DEc3d4DEc05b7f6B1874c6ED')
+const MASTER_SPACE = Address.fromString('TO_BE_UPDATED')
+const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('TO_BE_UPDATED')
 const MASTER_AXIOM = Address.fromString('0xaC6dbd42Ed254E9407fe0D2798784d0110979DC2')
 const MASTER_SIMPLE_QUORUM_TIMELOCK = Address.fromString(
   '0xeD352980Dc57f18FBC7afa9A78BCbD95c2f0af58'
