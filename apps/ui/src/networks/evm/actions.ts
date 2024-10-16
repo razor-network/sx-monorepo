@@ -12,7 +12,8 @@ import {
   evmLineaGoerli,
   EvmNetworkConfig,
   evmSkaleTestnet,
-  evmSkaleMainnet
+  evmSkaleMainnet,
+  evmEuropaMainnet
 } from '@snapshot-labs/sx';
 import { MANA_URL, executionCall } from '@/helpers/mana';
 import { CHAIN_IDS } from '@/helpers/constants';
@@ -65,7 +66,8 @@ const CONFIGS: Record<number, EvmNetworkConfig> = {
   11155111: evmSepolia,
   59140: evmLineaGoerli,
   1444673419: evmSkaleTestnet,
-  278611351: evmSkaleMainnet
+  278611351: evmSkaleMainnet,
+  2046399126: evmEuropaMainnet
 };
 
 export function createActions(

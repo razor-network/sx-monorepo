@@ -18,6 +18,7 @@ const sepoliaNetwork = createEvmNetwork('sep');
 const lineaTestnetNetwork = createEvmNetwork('linea-testnet');
 const skaleTestnetNetwork = createEvmNetwork('skale-testnet');
 const skaleMainnetNetwork = createEvmNetwork('skale-mainnet');
+const europaMainnetNetwork = createEvmNetwork('europa-mainnet');
 
 export const enabledNetworks: NetworkID[] = import.meta.env.VITE_ENABLED_NETWORKS
   ? (import.meta.env.VITE_ENABLED_NETWORKS.split(',') as NetworkID[])
@@ -32,6 +33,7 @@ export const enabledNetworks: NetworkID[] = import.meta.env.VITE_ENABLED_NETWORK
       'sep',
       'skale-testnet',
       'skale-mainnet',
+      'europa-mainnet',
       'sn',
       'sn-sep'
     ];
@@ -45,7 +47,8 @@ export const evmNetworks: NetworkID[] = [
   'sep',
   'linea-testnet',
   'skale-testnet',
-  'skale-mainnet'
+  'skale-mainnet',
+  'europa-mainnet'
 ];
 export const offchainNetworks: NetworkID[] = ['s', 's-tn'];
 
@@ -66,6 +69,7 @@ export const getNetwork = (id: NetworkID) => {
   if (id === 'sn-sep') return starknetSepoliaNetwork;
   if (id === 'skale-testnet') return skaleTestnetNetwork;
   if (id === 'skale-mainnet') return skaleMainnetNetwork;
+  if (id === 'europa-mainnet') return europaMainnetNetwork;
 
   throw new Error(`Unknown network ${id}`);
 };
