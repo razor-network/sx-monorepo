@@ -10,7 +10,8 @@ import {
   evmLineaGoerli,
   EvmNetworkConfig,
   evmSkaleTestnet,
-  evmSkaleMainnet
+  evmSkaleMainnet,
+  evmEuropaMainnet
 } from '@snapshot-labs/sx';
 import fetch from 'cross-fetch';
 import { createWalletProxy } from './dependencies';
@@ -25,7 +26,8 @@ export const NETWORKS = new Map<number, EvmNetworkConfig>([
   [11155111, evmSepolia],
   [59140, evmLineaGoerli],
   [1444673419, evmSkaleTestnet],
-  [278611351, evmSkaleMainnet]
+  [278611351, evmSkaleMainnet],
+  [2046399126, evmEuropaMainnet]
 ]);
 
 export const createNetworkHandler = (chainId: number) => {

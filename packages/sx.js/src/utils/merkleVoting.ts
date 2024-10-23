@@ -3,7 +3,7 @@ import { Contract } from '@ethersproject/contracts';
 
 import MerkleVotingABI from '../abis/MerkleVoting.json';
 
-const MERKLE_VOTING_RPC_PROVIDER = 'https://mainnet.skalenodes.com/v1/turbulent-unique-scheat';
+const MERKLE_VOTING_RPC_PROVIDER = 'https://mainnet.skalenodes.com/v1/elated-tan-skat';
 const MERKLE_VOTING_API = 'https://sx-api.razorscan.io';
 
 export async function getMerkleVotingParams(
