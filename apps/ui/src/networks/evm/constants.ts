@@ -17,10 +17,10 @@ import IHLightningBolt from '~icons/heroicons-outline/lightning-bolt';
 import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
 // !NOTE: hardcode change
-export const MAX_MERKLE_VOTING_STRATEGIES = 100;
+export const MAX_MERKLE_VOTING_STRATEGIES = 200;
 export const MERKLE_VOTING_STRATEGY_ADDRESS = evmNetworks['europa-mainnet'].Strategies.MerkleVoting;
 export const COOLDOWN_PERIOD = 10; // * seconds
-export const MAX_ACTIVE_PROPOSALS = 100;
+export const MAX_ACTIVE_PROPOSALS = 200;
 // !NOTE: Update this after space deployed
 export const EXECUTION_STRATEGY_ADDRESS = '0x7659C8469c50218EfC881382A85D919aCa22b200';
 export const QUORUM = '10000000000000000000000000'; // * 10 million
