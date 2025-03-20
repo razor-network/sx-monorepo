@@ -163,28 +163,28 @@ export const evmNetworks = {
   'skale-testnet': {
     Meta: {
       eip712ChainId: 1444673419,
-      proxyFactory: '0x96f98916be07BCdB2556349b13D5F404B78E13D7',
-      masterSpace: '0xae55A5603ba260eb38a1567774395f3e1871707B'
+      proxyFactory: '0xb8f69B9165bC2dC1c48aF509321F784E172a1E1b',
+      masterSpace: '0x364860563F06628CB77cB2c11fD6B475EF0fC32B'
     },
     Authenticators: {
-      EthSig: '0x0211a5e207fa0Fbbc17Fb6F297970e7a8E5d1c57',
-      EthTx: '0x4D2E0df9E26D034B6bA39DC983857e4bd18D4637'
+      EthSig: '0xf9BBB1Cd1561F404dC88D8228Be127473EFf7512',
+      EthTx: '0x8c94f2332E36714A12E9dc505ab53D14adEcC9b6'
     },
     Strategies: {
-      Vanilla: '0x697C27Edb2a52ef1E3B425C096f7F3e94685F969',
-      Comp: '0xF912b680B1FeB775913AD9A5BB2980e519E42D95',
-      OZVotes: '0x8B2759420d57f4A67208CE7FE08461Ae5695a723',
-      Whitelist: '0xD05365Bf55bfe95c9a7eF23798156580f9AB5231',
-      MerkleVoting: '0x7347CCfEd3074AaB4a8B705A830DAeF02fb88D95'
+      Vanilla: '0x0906E26f82ee09642ddAfe18adb657A5006Bb288',
+      Comp: '0xfE06177052113223a0197b8A516eda891471d174',
+      OZVotes: '0x2E9B1860Fc34be2e3a419A684e32Aa3cb8cEcD45',
+      Whitelist: '0x20803b44Fb47AA20a89c623F90283072f11A8309',
+      MerkleVoting: '0x59B4b3d6DFb087a235fc30F28271f7F7A712f254'
     },
     ProposalValidations: {
-      VotingPower: '0x690a8ac27242c7F0f3fA922ab5098E0b05f284c5',
-      WhitelistAndActiveProposalsLimiter: '0xB8EACf68daF6c5050fD2f3a02DFf1101F62F5bCc'
+      VotingPower: '0x33FE2ED28f7F0c4Cc95B303862099BD5Ae07ceca',
+      WhitelistAndActiveProposalsLimiter: '0x5Dfe37E040412dA321212e58E2be0B517425423f'
     },
     ExecutionStrategies: {
-      SimpleQuorumAvatar: '0x68F21c7fa715E9102C7476e3a08Ac896AFb9C3c9',
-      SimpleQuorumTimelock: '0xf2A1C2f2098161af98b2Cc7E382AB7F3ba86Ebc4',
-      SimpleQuorumVanilla: '0x84CfB838FA4F868560f03eA633b1bDC6e958bf63',
+      SimpleQuorumAvatar: '0x31aa43929aEeaeE71C75A3Df657c24186aCC4225',
+      SimpleQuorumTimelock: '0xFed26eA41F93EDdc0645aF905177d0af94B598dC',
+      SimpleQuorumVanilla: '0xbDa95dC559E7010C9795d2D9EAB359Ce1236Ad92',
       Axiom: null,
       Isokratia: null
     }

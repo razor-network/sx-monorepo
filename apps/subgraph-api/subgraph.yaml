@@ -1,4 +1,4 @@
-specVersion: 0.0.4
+specVersion: 0.0.9
 schema:
   file: ./schema.graphql
 dataSources:
@@ -7,8 +7,9 @@ dataSources:
     network: mainnet
     source:
       abi: ProxyFactory
-      address: 'TO_BE_UPDATED'
-      startBlock: 6240800
+      address: '0xb8f69B9165bC2dC1c48aF509321F784E172a1E1b'
+      startBlock: 5854500
+      endBlock: 5856993
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

@@ -3,7 +3,7 @@ import { Contract } from '@ethersproject/contracts';
 
 import SpaceABI from '../abis/Space.json';
 
-const PROVIDER_URL = 'https://mainnet.skalenodes.com/v1/elated-tan-skat';
+const PROVIDER_URL = 'https://testnet.skalenodes.com/v1/juicy-low-small-testnet';
 
 export function getNextProposalId(space: string) {
   const provider = new JsonRpcProvider(PROVIDER_URL);

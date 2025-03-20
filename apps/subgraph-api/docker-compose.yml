@@ -16,7 +16,7 @@ services:
       postgres_pass: password
       postgres_db: graph
       ipfs: 'https://api.thegraph.com/ipfs/'
-      ethereum: 'mainnet:https://mainnet.skalenodes.com/v1/elated-tan-skat'
+      ethereum: 'mainnet:https://testnet.skalenodes.com/v1/juicy-low-small-testnet'
       GRAPH_LOG: info
   postgres:
     image: postgres:15.4

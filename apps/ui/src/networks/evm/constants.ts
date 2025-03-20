@@ -18,13 +18,13 @@ import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
 // !NOTE: hardcode change
 export const MAX_MERKLE_VOTING_STRATEGIES = 200;
-export const MERKLE_VOTING_STRATEGY_ADDRESS = evmNetworks['europa-mainnet'].Strategies.MerkleVoting;
+export const MERKLE_VOTING_STRATEGY_ADDRESS = evmNetworks['skale-testnet'].Strategies.MerkleVoting;
 export const COOLDOWN_PERIOD = 10; // * seconds
 export const MAX_ACTIVE_PROPOSALS = 200;
 // !NOTE: Update this after space deployed
-export const EXECUTION_STRATEGY_ADDRESS = '0x7659C8469c50218EfC881382A85D919aCa22b200';
+export const EXECUTION_STRATEGY_ADDRESS = '0xEf479F05EE2112E8299E9Dd533Ba88a4D46e8F0A';
 export const QUORUM = '10000000000000000000000000'; // * 10 million
-export const SPACE_ADDRESS = '0x13921E036d92A6818472989af35633f541cA21D4';
+export const SPACE_ADDRESS = '0xda563888D7d4416D259CC34959d3702264eA8f83';
 export const REDIRECT_URL = `/europa-mainnet:${SPACE_ADDRESS}`;
 
 export function createConstants(networkId: NetworkID) {
