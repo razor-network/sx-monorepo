@@ -22,9 +22,9 @@ export const MERKLE_VOTING_STRATEGY_ADDRESS = evmNetworks['europa-mainnet'].Stra
 export const COOLDOWN_PERIOD = 10; // * seconds
 export const MAX_ACTIVE_PROPOSALS = 200;
 // !NOTE: Update this after space deployed
-export const EXECUTION_STRATEGY_ADDRESS = '0x7659C8469c50218EfC881382A85D919aCa22b200';
-export const QUORUM = '10000000000000000000000000'; // * 10 million
-export const SPACE_ADDRESS = '0x13921E036d92A6818472989af35633f541cA21D4';
+export const EXECUTION_STRATEGY_ADDRESS = '0x7659C8469c50218EfC881382A85D919aCa22b200'; // TO_BE_UPDATED
+export const QUORUM = '10000000000000000000000000'; // * 10 million // TO_BE_UPDATED
+export const SPACE_ADDRESS = '0x13921E036d92A6818472989af35633f541cA21D4'; // TO_BE_UPDATED
 export const REDIRECT_URL = `/europa-mainnet:${SPACE_ADDRESS}`;
 
 export function createConstants(networkId: NetworkID) {
