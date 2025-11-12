@@ -100,7 +100,7 @@ async function handleVoteClick(choice: Choice) {
           <a
             class="text-skin-text"
             @click="modalOpenTimeline = true"
-            v-text="_rt(getTsFromCurrent(proposal.network, proposal.max_end))"
+            v-text="_rt(proposal.created)"
           />
         </span>
       </div>
