@@ -96,7 +96,7 @@ export function createEvmNetwork(networkId: NetworkID): Network {
 
   const provider = getProvider(chainId);
   const api = createApi(apiUrl, networkId, {
-    highlightApiUrl: import.meta.env.VITE_HIGHLIGHT_URL
+    // highlightApiUrl: import.meta.env.VITE_HIGHLIGHT_URL
   });
   const constants = createConstants(networkId);
 
