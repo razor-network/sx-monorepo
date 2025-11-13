@@ -11,7 +11,8 @@ export const CHAIN_IDS = {
   sep: 11155111,
   'linea-testnet': 59140,
   'skale-testnet': 1444673419,
-  'skale-mainnet': 278611351
+  'skale-mainnet': 278611351,
+  'europa-mainnet': 2046399126
 };
 
 export const COINGECKO_ASSET_PLATFORMS = {

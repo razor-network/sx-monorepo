@@ -47,7 +47,7 @@ const SPACE_FRAGMENT = gql`
     strategies_indicies
     strategies
     strategies_params
-    strategies_parsed_metadata {
+    strategies_parsed_metadata(first: 1000) {
       index
       data {
         name
@@ -81,7 +81,7 @@ const PROPOSAL_FRAGMENT = gql`
         executors
         executors_types
       }
-      strategies_parsed_metadata {
+      strategies_parsed_metadata(first: 1000) {
         index
         data {
           name

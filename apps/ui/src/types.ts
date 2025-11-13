@@ -15,6 +15,7 @@ export type NetworkID =
   | 'linea-testnet'
   | 'skale-testnet'
   | 'skale-mainnet'
+  | 'europa-mainnet'
   | 'sn'
   | 'sn-tn'
   | 'sn-sep';

@@ -88,6 +88,13 @@ export const METADATA: Record<string, Metadata> = {
     apiUrl: 'https://sx-indexer.razorscan.io/subgraphs/name/snapshot-labs/sx-subgraph',
     avatar: 'https://ipfs.io/ipfs/QmRXoxMnz9ViWzQ7Ewg7dA8XtQoxp8gQ4cWjqj1Vk2ue2p/razor.png',
     blockTime: 10.7 // * Calculated from the average block time of the last 1000, 10000 blocks
+  },
+  'europa-mainnet': {
+    name: 'Europa Mainnet',
+    chainId: 2046399126,
+    apiUrl: 'https://sx-indexer.razorscan.io/subgraphs/name/snapshot-labs/sx-subgraph', // TO_BE_UPDATED
+    avatar: 'https://ipfs.io/ipfs/QmRXoxMnz9ViWzQ7Ewg7dA8XtQoxp8gQ4cWjqj1Vk2ue2p/razor.png',
+    blockTime: 10.7 // * Calculated from the average block time of the last 1000, 10000 blocks
   }
 };
 
