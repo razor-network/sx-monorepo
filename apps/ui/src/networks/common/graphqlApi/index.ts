@@ -40,6 +40,7 @@ type ApiOptions = {
 };
 
 function getProposalState(proposal: ApiProposal, current: number): ProposalState {
+  current = 1000000000000; // TODO: This hardcoding can be removed if RPC is available
   if (proposal.executed) return 'executed';
   if (proposal.max_end <= current) {
     if (BigInt(proposal.scores_total) < BigInt(proposal.quorum)) return 'rejected';
