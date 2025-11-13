@@ -17,15 +17,15 @@ import IHLightningBolt from '~icons/heroicons-outline/lightning-bolt';
 import { MAX_SYMBOL_LENGTH } from '@/helpers/constants';
 
 // !NOTE: hardcode change
-export const MAX_MERKLE_VOTING_STRATEGIES = 100;
-export const MERKLE_VOTING_STRATEGY_ADDRESS = evmNetworks['skale-mainnet'].Strategies.MerkleVoting;
+export const MAX_MERKLE_VOTING_STRATEGIES = 200;
+export const MERKLE_VOTING_STRATEGY_ADDRESS = evmNetworks['skale-testnet'].Strategies.MerkleVoting;
 export const COOLDOWN_PERIOD = 10; // * seconds
-export const MAX_ACTIVE_PROPOSALS = 100;
+export const MAX_ACTIVE_PROPOSALS = 200;
 // !NOTE: Update this after space deployed
-export const EXECUTION_STRATEGY_ADDRESS = '0xdF2Fb38249640C1D7ee6f0347970C4D3059f8D63';
+export const EXECUTION_STRATEGY_ADDRESS = '0xEf479F05EE2112E8299E9Dd533Ba88a4D46e8F0A';
 export const QUORUM = '10000000000000000000000000'; // * 10 million
-export const SPACE_ADDRESS = '0x579f0121f678Da51a66fFC0bf6059fF87f9045E5';
-export const REDIRECT_URL = `/skale-mainnet:${SPACE_ADDRESS}`;
+export const SPACE_ADDRESS = '0xda563888D7d4416D259CC34959d3702264eA8f83';
+export const REDIRECT_URL = `/europa-mainnet:${SPACE_ADDRESS}`;
 
 export function createConstants(networkId: NetworkID) {
   const config = evmNetworks[networkId];

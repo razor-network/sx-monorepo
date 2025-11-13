@@ -22,7 +22,7 @@ import Explore from '@/views/My/Explore.vue';
 import SettingsSpaces from '@/views/Settings/Spaces.vue';
 import Apps from '@/views/Apps.vue';
 import App from '@/views/App.vue';
-import { REDIRECT_URL } from './networks/evm/constants';
+// import { REDIRECT_URL } from './networks/evm/constants';
 
 const { mixpanel } = useMixpanel();
 
@@ -30,7 +30,7 @@ const routes: any[] = [
   {
     path: '/',
     name: 'landing',
-    redirect: REDIRECT_URL,
+    // redirect: REDIRECT_URL,
     component: Landing
   },
   {
@@ -62,7 +62,7 @@ const routes: any[] = [
     ]
   },
   { path: '/profile/:id', name: 'user', component: User },
-  { path: '/create', name: 'create', redirect: REDIRECT_URL, component: Landing },
+  { path: '/create', name: 'create', component: Create },
   {
     path: '/settings',
     name: 'settings',

@@ -4,7 +4,7 @@ import { keccak256 } from '@ethersproject/solidity';
 import randomBytes from 'randombytes';
 import { getAuthenticator } from '../../../authenticators/evm';
 import { getStrategiesWithParams } from '../../../strategies/evm';
-import { evmSkaleMainnet } from '../../../networks';
+import { evmEuropaMainnet, evmSkaleTestnet } from '../../../networks';
 import SpaceAbi from './abis/Space.json';
 import ProxyFactoryAbi from './abis/ProxyFactory.json';
 import AvatarExecutionStrategyAbi from './abis/AvatarExecutionStrategy.json';
@@ -102,7 +102,7 @@ export class EthereumTx {
   networkConfig: EvmNetworkConfig;
 
   constructor(opts?: { networkConfig: EvmNetworkConfig }) {
-    this.networkConfig = opts?.networkConfig || evmSkaleMainnet;
+    this.networkConfig = opts?.networkConfig || evmSkaleTestnet;
   }
 
   async deployAvatarExecution({
@@ -561,7 +561,12 @@ export class EthereumTx {
       this.networkConfig
     );
 
-    console.log({ userVotingStrategies });
+    console.log({
+      userVotingStrategies,
+      proposal: envelope.data.proposal,
+      choice: envelope.data.choice,
+      metadataUri: envelope.data.metadataUri
+    });
 
     const spaceInterface = new Interface(SpaceAbi);
     const functionData = spaceInterface.encodeFunctionData('vote', [
@@ -581,7 +586,10 @@ export class EthereumTx {
     }
     const { abi, args } = authenticator.createCall(envelope, selector, [calldata]);
 
+    console.log({ calldata });
+
     const authenticatorContract = new Contract(envelope.data.authenticator, abi, signer);
+    console.log({ authenticatorContract });
     const promise = authenticatorContract.authenticate(...args);
 
     return opts.noWait ? null : promise;
