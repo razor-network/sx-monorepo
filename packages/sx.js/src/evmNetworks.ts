@@ -217,6 +217,35 @@ export const evmNetworks = {
       Axiom: null,
       Isokratia: null
     }
+  },
+  'europa-mainnet': {
+    Meta: {
+      eip712ChainId: 2046399126,
+      proxyFactory: 'TO_BE_UPDATED',
+      masterSpace: 'TO_BE_UPDATED'
+    },
+    Authenticators: {
+      EthSig: 'TO_BE_UPDATED',
+      EthTx: 'TO_BE_UPDATED'
+    },
+    Strategies: {
+      Vanilla: 'TO_BE_UPDATED',
+      Comp: 'TO_BE_UPDATED',
+      OZVotes: 'TO_BE_UPDATED',
+      Whitelist: 'TO_BE_UPDATED',
+      MerkleVoting: 'TO_BE_UPDATED'
+    },
+    ProposalValidations: {
+      VotingPower: 'TO_BE_UPDATED',
+      WhitelistAndActiveProposalsLimiter: 'TO_BE_UPDATED'
+    },
+    ExecutionStrategies: {
+      SimpleQuorumAvatar: 'TO_BE_UPDATED',
+      SimpleQuorumTimelock: 'TO_BE_UPDATED',
+      SimpleQuorumVanilla: 'TO_BE_UPDATED',
+      Axiom: null,
+      Isokratia: null
+    }
   }
 } as const;
 
@@ -229,3 +258,4 @@ export const evmArbitrum = createEvmConfig('arb1');
 export const evmLineaGoerli = createEvmConfig('linea-testnet');
 export const evmSkaleTestnet = createEvmConfig('skale-testnet');
 export const evmSkaleMainnet = createEvmConfig('skale-mainnet');
+export const evmEuropaMainnet = createEvmConfig('europa-mainnet');
